@@ -158,13 +158,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .masthead-ver { font-size:11px; color:#8a8272; letter-spacing:.02em; margin-top:6px; }
 
   /* ── 사용법 안내 ── */
-  .guide { font-size:13px; line-height:1.75; color:var(--ink); }
-  .guide-lead { margin:0 0 16px; padding-bottom:14px; border-bottom:1px solid var(--line); color:#5c5648; }
-  .guide h3 { font-family:var(--serif); font-size:14.5px; font-weight:800; color:var(--navy); margin:18px 0 8px; }
-  .guide h3:first-of-type { margin-top:0; }
-  .guide ol, .guide ul { margin:0; padding-left:20px; }
-  .guide li { margin-bottom:7px; }
-  .guide-note { margin-top:18px; padding:11px 13px; background:var(--warn-bg); border-left:3px solid var(--warn); border-radius:3px; font-size:12.5px; color:#7a3a20; }
+  .guide { font-size:12.5px; line-height:1.65; color:var(--ink); }
+  .guide h3 { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); margin:18px 0 8px; }
+  .guide ul { margin:0; padding-left:17px; }
+  .guide li { margin-bottom:5px; }
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .step { background:#fffdf9; border:1px solid var(--line); border-radius:6px; padding:12px 14px 12px 12px; }
+  .step-n { font-family:var(--serif); font-size:22px; font-weight:800; color:var(--brass); line-height:1; }
+  .step-t { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); margin:4px 0 8px; }
+  .step ul { padding-left:15px; }
+  .guide-first { margin-top:12px; padding:9px 12px; background:var(--paper-2); border-radius:4px; font-size:12.5px; }
+  .guide-warn { }
+  .guide-warn li strong { color:var(--navy); }
+  .guide-note { margin-top:16px; padding:10px 12px; background:var(--warn-bg); border-left:3px solid var(--warn); border-radius:3px; font-size:12px; color:#7a3a20; }
+  @media (max-width:760px){ .steps { grid-template-columns:1fr; } }
 
   /* ── 첨부 판독 화면: 원본을 크게 보면서 바로 입력 ── */
   .modal { position:fixed; inset:0; background:rgba(28,46,74,0.55); z-index:100; display:none; padding:24px; }
@@ -184,6 +191,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .modal-foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:12px 18px; border-top:1px solid var(--line); }
   .modal-count { font-size:12px; color:#8a8272; margin-right:auto; }
   @media (max-width:860px){ .modal-body { grid-template-columns:1fr; } .modal-preview { min-height:200px; } }
+
+  /* ── 사진에서 숫자 읽기(OCR) 결과 ── */
+  .ocr-status { font-size:12px; color:#8a8272; padding:8px 10px; background:var(--paper-2); border-radius:4px; line-height:1.6; }
+  .ocr-hit { font-size:12px; color:var(--ok); background:var(--ok-bg); padding:7px 10px; border-radius:4px; margin-bottom:8px; }
+  .ocr-group { margin-bottom:10px; }
+  .ocr-label { font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:#8a8272; font-weight:700; margin-bottom:5px; }
+  .ocr-hint { text-transform:none; letter-spacing:0; font-weight:400; }
+  .ocr-chips { display:flex; flex-wrap:wrap; gap:5px; }
+  .ocr-chips .btn { font-family:var(--mono); }
+  .ocr-none { font-size:12px; color:#8a8272; }
+  .ocr-warn { font-size:11.5px; color:#7a3a20; background:var(--warn-bg); border-left:3px solid var(--warn); padding:7px 10px; border-radius:3px; line-height:1.55; }
 
   /* ── 인쇄: 검토조서만 거래처별로 한 장씩 ── */
   @media print {
@@ -212,33 +230,45 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <h2 class="card-toggle" onclick="toggleCard(this)"><span class="chev">▸</span> 📖 처음 쓰시는 분 — 사용법 (눌러서 펼치기)</h2>
     <div class="card-body">
       <div class="guide">
-        <p class="guide-lead">거래처별로 <strong>세금계산서·계약서·견적서·송금</strong>을 대조해서 조기환급 검토를 돕는 도구입니다. 설치 없이 이 파일을 더블클릭하면 열리고, 인터넷 없이도 동작합니다.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-n">1</div>
+            <div class="step-t">자료 올리기</div>
+            <ul>
+              <li><strong>취득명세서 엑셀</strong> → 2번 (위하고에서 엑셀로 변환해 받은 것)</li>
+              <li><strong>견적서·이체확인증 사진</strong> → 3·4번 (올리면 판독창이 열립니다)</li>
+              <li>판독창의 <strong>🔍 사진에서 숫자 읽기</strong>로 금액·날짜 후보를 뽑을 수 있습니다</li>
+            </ul>
+          </div>
+          <div class="step">
+            <div class="step-n">2</div>
+            <div class="step-t">확인하기</div>
+            <ul>
+              <li><strong>5번 대사표</strong> — 금액 자동 비교, ＋로 서류 첨부</li>
+              <li><strong>6번 자동 점검</strong> — 공급시기·누락·차액 확인할 점</li>
+            </ul>
+          </div>
+          <div class="step">
+            <div class="step-n">3</div>
+            <div class="step-t">넘기기</div>
+            <ul>
+              <li><strong>7번 조서</strong>에 결론(○△✗)과 근거 적기</li>
+              <li><strong>🖨 조서만 인쇄</strong> → 세무사님께 거래처별 1장</li>
+            </ul>
+          </div>
+        </div>
 
-        <h3>순서대로 하시면 됩니다</h3>
-        <ol>
-          <li><strong>거래처 정보</strong> — 상호·담당자와 <strong>연도, 조기환급 대상월</strong>을 꼭 넣어주세요. 이 두 개가 없으면 날짜 점검이 돌지 않습니다.</li>
-          <li><strong>건물등감가상각취득명세서</strong> (2번) — 위하고에서 <strong>엑셀로 변환해 다운로드</strong>한 파일을 그대로 올리면 거래처가 한 번에 채워집니다. 화면 캡처·PDF는 자동으로 안 채워집니다.</li>
-          <li><strong>견적서·송금내역</strong> (3·4번) — 사진이나 PDF를 올리면 <strong>판독 화면이 자동으로 열립니다.</strong> 원본을 보면서 거래처·일자·금액 세 칸만 채우세요. "세금계산서 상호에서 고르기" 버튼을 쓰면 거래처명이 정확히 맞춰집니다.</li>
-          <li><strong>대사표</strong> (5번) — 금액이 자동 비교됩니다. 첨부서류 칸의 <strong>＋</strong>로 계약서·견적서·입금증 파일을 거래처별로 붙일 수 있습니다.</li>
-          <li><strong>자동 점검</strong> (6번) — 공급시기·자료누락·금액차이 중 확인할 점을 찾아줍니다.</li>
-          <li><strong>검토조서</strong> (7번) — 거래처당 한 장입니다. <strong>검토 결론</strong>(○ 신고가능 / △ 자료보완 / ✗ 제외)과 근거를 적으세요.</li>
-          <li><strong>엑셀로 다운로드</strong>로 보관하고, 세무사님께는 <strong>"🖨 조서만 인쇄"</strong>로 거래처별 한 장씩 드리면 됩니다.</li>
-        </ol>
+        <div class="guide-first">시작 전에 <strong>연도</strong>와 <strong>조기환급 대상월</strong>을 먼저 넣어주세요. 이게 없으면 날짜 점검이 돌지 않습니다.</div>
 
-        <h3>동료에게 전해줄 때</h3>
-        <p style="margin:0 0 8px">이 화면을 <strong>링크로</strong> 보고 계시다면, 위쪽 <strong>💾 이 도구를 HTML 파일로 받기</strong>를 눌러 내 컴퓨터에 저장하세요. 저장한 파일은 인터넷 없이도 열리고, 메일·공유폴더로 그대로 전달할 수 있습니다. (이미 파일로 열어 쓰고 계시면 그 버튼은 보이지 않습니다 — 그 파일을 복사해서 주시면 됩니다.)</p>
-
-        <h3>이건 꼭 알고 쓰셔야 합니다</h3>
-        <ul>
-          <li><strong>거래처명은 세금계산서 상호로 통일하세요.</strong> 통장에는 대표자 개인명이 찍히는 경우가 많습니다(예: 세금계산서 "혜성" ↔ 통장 "임규해"). 이름이 다르면 <strong>다른 거래처로 잡혀 매칭이 안 됩니다.</strong> 판독 화면의 상호 버튼을 쓰면 실수가 없습니다.</li>
-          <li><strong>첨부한 📎 파일은 창을 닫으면 링크가 끊깁니다.</strong> 검토가 끝나면 엑셀로 내려받아 기록을 남기고, 원본 파일은 거래처별 폴더에 따로 보관하세요.</li>
-          <li><strong>저장은 이 컴퓨터의 이 브라우저에만 남습니다.</strong> 다른 사람에게 넘길 자료는 엑셀로 내려받아 전달하세요.</li>
-          <li><strong>자동 점검과 자동 채움은 참고용입니다.</strong> 날짜·금액만 보고 기계적으로 걸러낸 결과라, 계약금·잔금 분할지급이나 중간지급조건부 공사처럼 <strong>정상인데도 "확인필요"가 뜨는 경우가 많습니다.</strong> 반드시 원본 서류로 확인하세요.</li>
-          <li><strong>사진의 숫자를 자동으로 읽어주지는 않습니다.</strong> 금액은 원본을 보고 직접 입력하셔야 합니다.</li>
+        <h3>꼭 알아두기</h3>
+        <ul class="guide-warn">
+          <li><strong>거래처명은 세금계산서 상호로 통일</strong> — 통장에 찍힌 대표자 개인명으로 넣으면 다른 거래처로 잡힙니다. 판독창의 상호 버튼을 쓰면 실수가 없습니다.</li>
+          <li><strong>📎 첨부는 창을 닫으면 끊깁니다</strong> — 끝나면 엑셀로 내려받아 기록을 남기고 원본은 폴더에 보관하세요.</li>
+          <li><strong>저장은 내 브라우저에만 남습니다</strong> — 남에게 줄 자료는 엑셀로 내려받으세요.</li>
+          <li><strong>자동 점검·자동 인식은 추정입니다</strong> — 정상인데도 "확인필요"가 뜰 수 있습니다. 반드시 원본과 대조하세요.</li>
         </ul>
 
-        <div class="guide-note">⚠️ 이 도구의 결과는 참고용입니다. 신고 전 반드시 <strong>담당 세무사의 최종 검토</strong>를 거쳐주세요. 특히 공급시기 판단은 거래 형태별로 달라지므로 관련 법령·예규 확인이 필요합니다.</div>
-      </div>
+        <div class="guide-note">⚠️ 이 도구의 결과는 참고용입니다. 신고 전 반드시 <strong>담당 세무사의 최종 검토</strong>를 거쳐주세요.</div></div>
     </div>
   </div>
 
@@ -946,6 +976,10 @@ function renderReadPanel(){
       <label>${amountLabel}</label>
       <input id="readAmount" class="amount-in" value="${numStr(row.amount)}" placeholder="0">
     </div>
+    <div class="row-gap" style="margin:0">
+      <button class="btn secondary small" onclick="runOcrOnCurrent()">🔍 사진에서 숫자 읽기</button>
+    </div>
+    <div id="ocrArea"></div>
     <div class="hint" style="margin:0">거래처명은 <strong>세금계산서(취득명세서)와 똑같이</strong> 적어주세요. 통장에 대표자 개인명이 찍혀 있어도 상호로 통일해야 대사표에서 묶입니다.</div>
   `;
 
@@ -956,6 +990,154 @@ function renderReadPanel(){
   dateEl.oninput   = () => onFieldChange(section, id, 'date', dateEl.value);
   amountEl.oninput = () => onAmountChange(section, id, amountEl.value);
   vendorEl.focus();
+}
+
+/* ------------------------------------------------------------------ */
+/* 사진에서 숫자 읽기 (OCR)                                                */
+/*  - 숫자만 읽습니다. 한글 상호는 인식률이 낮아 아예 시도하지 않고,             */
+/*    사업자등록번호를 읽어 취득명세서의 상호와 맞추는 방식을 씁니다.            */
+/*  - 읽은 값은 곧바로 반영하지 않고 "후보"로 보여주고 눌러서 채택합니다.        */
+/* ------------------------------------------------------------------ */
+const TESSERACT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js';
+let tesseractLoading = null;
+
+function loadTesseract(){
+  if (typeof Tesseract !== 'undefined') return Promise.resolve(Tesseract);
+  if (tesseractLoading) return tesseractLoading;
+  tesseractLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = TESSERACT_SRC;
+    s.onload = () => (typeof Tesseract !== 'undefined') ? resolve(Tesseract) : reject(new Error('로드됐지만 사용할 수 없음'));
+    s.onerror = () => reject(new Error('스크립트를 불러올 수 없음'));
+    document.head.appendChild(s);
+    setTimeout(() => reject(new Error('시간 초과')), 30000);
+  });
+  return tesseractLoading;
+}
+
+/* OCR 로 읽은 글자에서 금액·날짜·사업자등록번호 후보를 뽑아냄 */
+function extractCandidates(text){
+  const t = String(text || '');
+
+  // 사업자등록번호: 3-2-5 자리 (구분자는 하이픈·점·공백 모두 허용)
+  const bizNos = [];
+  const bizRe = /(\d{3})\s*[-–.]\s*(\d{2})\s*[-–.]\s*(\d{5})/g;
+  let m;
+  while ((m = bizRe.exec(t)) !== null) bizNos.push(`${m[1]}-${m[2]}-${m[3]}`);
+
+  // 날짜: 2026-06-23 / 2026.06.23 / 2026년 06월 23일 / 2026 06 23
+  const dates = [];
+  const dateRe = /(20\d{2})\s*[-–.년/]\s*(\d{1,2})\s*[-–.월/]\s*(\d{1,2})/g;
+  while ((m = dateRe.exec(t)) !== null){
+    const mo = +m[2], d = +m[3];
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31){
+      dates.push(`${m[1]}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+    }
+  }
+
+  // 금액: 천단위 쉼표가 있는 숫자만 (쉼표 없는 숫자는 수량·전화번호와 섞여 위험)
+  const amounts = [];
+  const amtRe = /\d{1,3}(?:,\d{3})+/g;
+  while ((m = amtRe.exec(t)) !== null){
+    const n = parseInt(m[0].replace(/,/g,''), 10);
+    if (n >= 10000) amounts.push(n); // 만원 미만은 단가·수량일 가능성이 높아 제외
+  }
+
+  return {
+    bizNos: Array.from(new Set(bizNos)),
+    // 이체확인증에는 "조회기준일시(오늘)"가 함께 찍히는데 실제 거래일보다 늦습니다.
+    // 오래된 날짜를 앞에 두면 거래일이 1순위로 올라옵니다.
+    dates: Array.from(new Set(dates)).sort(),
+    // 큰 금액이 합계일 가능성이 높으므로 내림차순, 중복 제거
+    amounts: Array.from(new Set(amounts)).sort((a,b) => b - a).slice(0, 8)
+  };
+}
+
+/* 사업자등록번호로 취득명세서의 상호를 찾음 (숫자만 비교) */
+function vendorByBizNo(bizNo){
+  const digits = s => String(s||'').replace(/\D/g,'');
+  const target = digits(bizNo);
+  if (target.length !== 10) return null;
+  const hit = state.invoices.find(r => digits(r.bizNo) === target);
+  return hit ? resolveVendor(hit.vendor) : null;
+}
+
+async function runOcrOnCurrent(){
+  const { section, id } = readPanel;
+  if (!section) return;
+  const row = state[section].find(r => r.id === id);
+  if (!row || !row.attachmentUrl) return;
+  if (/\.pdf$/i.test(row.attachmentName || '')){
+    setOcrStatus('PDF는 숫자 읽기를 지원하지 않아요. 화면을 보고 직접 입력해주세요.');
+    return;
+  }
+
+  setOcrStatus('사진에서 숫자를 읽고 있어요… (10~30초, 처음 한 번은 더 걸립니다)');
+  try {
+    const T = await loadTesseract();
+    // 숫자만 필요하므로 영어 모델만 사용 (한글 모델보다 가볍고 숫자 정확도가 높음)
+    const res = await T.recognize(row.attachmentUrl, 'eng');
+    const cands = extractCandidates(res && res.data ? res.data.text : '');
+    renderOcrResult(cands);
+  } catch (err) {
+    setOcrStatus('숫자 읽기를 쓸 수 없어요 (' + (err && err.message ? err.message : '원인 불명') +
+      '). 인터넷이 연결된 상태에서 HTML 파일로 열면 동작합니다. 그동안은 화면을 보고 직접 입력해주세요.');
+  }
+}
+
+function setOcrStatus(msg){
+  const el = document.getElementById('ocrArea');
+  if (el) el.innerHTML = `<div class="ocr-status">${escapeHtml(msg)}</div>`;
+}
+
+function renderOcrResult(c){
+  const el = document.getElementById('ocrArea');
+  if (!el) return;
+  const isQuote = readPanel.section === 'quotations';
+
+  // 사업자등록번호로 상호를 찾으면 바로 맞춰줌 (숫자 완전일치라 안전)
+  let matchedNote = '';
+  for (const b of c.bizNos){
+    const v = vendorByBizNo(b);
+    if (v){
+      pickReadVendor(v);
+      matchedNote = `<div class="ocr-hit">✓ 사업자등록번호 ${escapeHtml(b)} → 거래처를 <strong>${escapeHtml(v)}</strong>로 맞췄습니다</div>`;
+      break;
+    }
+  }
+
+  const chips = (arr, fn, fmt) => arr.length
+    ? arr.map(x => `<button class="btn secondary small" onclick="${fn}('${jsAttr(String(x))}')">${escapeHtml(fmt(x))}</button>`).join('')
+    : '<span class="ocr-none">찾지 못했어요 — 직접 입력해주세요</span>';
+
+  el.innerHTML = `
+    ${matchedNote}
+    <div class="ocr-group">
+      <div class="ocr-label">읽어낸 ${isQuote ? '견적금액' : '송금액'} 후보 <span class="ocr-hint">(큰 금액이 위 · 눌러서 넣기)</span></div>
+      <div class="ocr-chips">${chips(c.amounts, 'useOcrAmount', v => won(v))}</div>
+    </div>
+    <div class="ocr-group">
+      <div class="ocr-label">읽어낸 날짜 후보</div>
+      <div class="ocr-chips">${chips(c.dates, 'useOcrDate', v => v)}</div>
+    </div>
+    <div class="ocr-warn">⚠️ 사진에서 기계로 읽은 값이라 <strong>틀릴 수 있습니다.</strong> 왼쪽 원본과 반드시 대조하고 넣어주세요.</div>
+  `;
+}
+
+function useOcrAmount(v){
+  const { section, id } = readPanel;
+  if (!section) return;
+  onAmountChange(section, id, v);
+  const el = document.getElementById('readAmount');
+  if (el) el.value = numStr(parseAmountLoose(v));
+}
+
+function useOcrDate(v){
+  const { section, id } = readPanel;
+  if (!section) return;
+  onFieldChange(section, id, 'date', v);
+  const el = document.getElementById('readDate');
+  if (el) el.value = v;
 }
 
 /* 세금계산서 상호 버튼을 누르면 거래처명을 그대로 맞춰줌 (이름 불일치 방지) */
