@@ -138,7 +138,21 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media (max-width:720px){ .meta-grid{grid-template-columns:1fr;} .map-grid{grid-template-columns:1fr 1fr;} }
 
 
-  .masthead-ver { font-size:11px; color:#8a8272; letter-spacing:.02em; margin-top:6px; }
+  /* 발행 주체 - 자간을 넓힌 작은 라벨. text-indent 는 마지막 글자 뒤에 남는
+     자간 여백만큼 되밀어 글자가 가운데에 오도록 보정합니다. */
+  .masthead-firm {
+    font-size:11px; font-weight:700; color:var(--brass);
+    letter-spacing:.34em; text-indent:.34em; margin-bottom:9px;
+  }
+  /* 판 날짜 - 얇은 선 사이에 두어 본문과 섞이지 않게 (판권 표기처럼) */
+  .masthead-ver {
+    display:flex; align-items:center; gap:10px; margin-top:13px;
+    font-family:var(--mono); font-size:10.5px; color:#a79e8b;
+    font-variant-numeric: tabular-nums; letter-spacing:.04em;
+  }
+  .masthead-ver::before, .masthead-ver::after {
+    content:''; width:32px; height:1px; background:var(--line);
+  }
 
   /* ── 사용법 안내 ── */
   .guide { font-size:12.5px; line-height:1.65; color:var(--ink); }
@@ -198,8 +212,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div class="masthead">
     <div class="masthead-icon">🧾</div>
+    <div class="masthead-firm">대한세무법인</div>
     <h1><span class="hl-navy">조기환급시</span> <span class="hl-brass">체크리스트</span></h1>
-    <div class="masthead-ver">대한세무법인 · 2026-09-04판 · 사용법은 아래 📖 를 눌러보세요</div>
+    <div class="masthead-ver">2026.09.04판</div>
   </div>
   <!-- 사용법: 이 파일만 받은 직원도 바로 쓸 수 있게 접어서 넣어둠 -->
   <div class="card collapsed" id="guideCard">
