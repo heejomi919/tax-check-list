@@ -380,8 +380,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="hint">입력된 <strong>날짜와 금액</strong>만 보고 거래처별로 확인할 점을 자동으로 찾아줘요. 날짜를 비워둔 자료는 날짜 점검에서 빠지고, <strong>추정이라 오탐이 있을 수 있으니</strong> 반드시 원본 서류로 확인해주세요.</div>
     <div class="table-wrap"><table style="min-width:720px">
       <thead><tr>
-        <th style="width:150px">거래처</th>
-        <th style="width:90px">등급</th>
+        <th style="width:170px">거래처</th>
         <th>확인할 점</th>
       </tr></thead>
       <tbody id="auditBody"></tbody>
@@ -928,10 +927,10 @@ function auditVendorList(){
   ]));
 }
 
-function auditGrade(issues){
-  if (issues.some(i => i.level === 'warn')) return { cls:'warn', label:'⚠ 확인필요' };
-  if (issues.length) return { cls:'pending', label:'참고' };
-  return { cls:'ok', label:'✓ 이상없음' };
+/* 확인필요가 하나라도 있으면 그 거래처를 위로 (같은 등급이면 입력 순서 유지) */
+function auditRank(issues){
+  if (issues.some(i => i.level === 'warn')) return 0;
+  return issues.length ? 1 : 2;
 }
 
 function renderAudit(bodyId){
@@ -939,24 +938,18 @@ function renderAudit(bodyId){
   if (!body) return;
   const vendors = auditVendorList();
   if (vendors.length === 0){
-    body.innerHTML = `<tr><td colspan="3" style="color:#8a8272">거래처 자료를 입력하면 확인할 점을 자동으로 찾아드려요.</td></tr>`;
+    body.innerHTML = `<tr><td colspan="2" style="color:#8a8272">거래처 자료를 입력하면 확인할 점을 자동으로 찾아드려요.</td></tr>`;
     return;
   }
-  // 확인필요 거래처를 위로
   const rows = vendors.map(v => ({ v, issues: auditVendor(v) }));
-  rows.sort((a,b) => {
-    const rank = x => x.issues.some(i=>i.level==='warn') ? 0 : (x.issues.length ? 1 : 2);
-    return rank(a) - rank(b);
-  });
+  rows.sort((a,b) => auditRank(a.issues) - auditRank(b.issues));
   body.innerHTML = rows.map(({v, issues}) => {
-    const g = auditGrade(issues);
     const sorted = issues.slice().sort((a,b) => (a.level==='warn'?0:1) - (b.level==='warn'?0:1));
     const list = sorted.length
       ? `<ul class="audit-list">${sorted.map(i => `<li class="${i.level}">${escapeHtml(i.text)}</li>`).join('')}</ul>`
       : `<span style="color:#8a8272">입력된 자료 기준으로 특이사항 없음</span>`;
     return `<tr>
       <td>${escapeHtml(v)}</td>
-      <td><span class="badge ${g.cls}">${g.label}</span></td>
       <td>${list}</td>
     </tr>`;
   }).join('');
@@ -1489,29 +1482,25 @@ function exportExcel(){
   push([]);
 
   push(['6. 자동 점검 (공급시기·자료누락·금액차이)']);
-  push(['거래처','등급','확인할 점']);
+  push(['거래처','확인할 점']);
   const auditRows = auditVendorList().map(v => ({ v, issues: auditVendor(v) }));
-  auditRows.sort((a,b) => {
-    const rank = x => x.issues.some(i=>i.level==='warn') ? 0 : (x.issues.length ? 1 : 2);
-    return rank(a) - rank(b);
-  });
+  auditRows.sort((a,b) => auditRank(a.issues) - auditRank(b.issues));
   if (auditRows.length === 0){
-    push(['','','입력된 거래처 자료가 없습니다']);
+    push(['','입력된 거래처 자료가 없습니다']);
   } else {
     auditRows.forEach(({v, issues}) => {
-      const grade = auditGrade(issues).label.replace(/[⚠✓]\s*/g,'');
       if (issues.length === 0){
-        push([v, grade, '입력된 자료 기준으로 특이사항 없음']);
+        push([v, '입력된 자료 기준으로 특이사항 없음']);
       } else {
         const sorted = issues.slice().sort((a,b) => (a.level==='warn'?0:1) - (b.level==='warn'?0:1));
         sorted.forEach((iss, idx) => {
-          push([idx === 0 ? v : '', idx === 0 ? grade : '', `${iss.level === 'warn' ? '[확인필요] ' : '[참고] '}${iss.text}`]);
+          push([idx === 0 ? v : '', `${iss.level === 'warn' ? '[확인필요] ' : '[참고] '}${iss.text}`]);
         });
       }
     });
   }
   push([]);
-  push(['', '', '※ 자동 점검은 입력된 날짜·금액만 본 추정입니다. 반드시 원본 서류로 확인하고, 공급시기 판단은 담당 세무사 검토를 거쳐주세요.']);
+  push(['', '※ 자동 점검은 입력된 날짜·금액만 본 추정입니다. 반드시 원본 서류로 확인하고, 공급시기 판단은 담당 세무사 검토를 거쳐주세요.']);
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -1519,8 +1508,7 @@ function exportExcel(){
     const addr = XLSX.utils.encode_cell({ r, c });
     ws[addr] = { t: t || 'n', f, v: v === undefined ? 0 : v };
   });
-  // C열은 "6. 자동 점검"의 확인할 점(긴 문장)이 들어가므로 넉넉하게
-  ws['!cols'] = [{wch:22},{wch:24},{wch:38},{wch:18},{wch:40},{wch:14},{wch:12},{wch:8},{wch:14},{wch:16}];
+  ws['!cols'] = [{wch:22},{wch:24},{wch:16},{wch:18},{wch:40},{wch:14},{wch:12},{wch:8},{wch:14},{wch:16}];
   XLSX.utils.book_append_sheet(wb, ws, '조기환급체크');
   const filename = `조기환급체크_${sanitizeKey(state.meta.clientName||'거래처')}_${sanitizeKey(periodLabel())}.xlsx`;
   saveWorkbook(wb, filename);
