@@ -64,11 +64,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:18px 20px; margin-bottom:18px; box-shadow:0 1px 2px rgba(28,46,74,0.04); }
   .card h2 { font-family: var(--serif); font-size:19px; font-weight:800; margin:0 0 14px; color:var(--navy); letter-spacing:-0.01em; display:flex; align-items:center; gap:8px; }
+  /* 번호는 채운 배지 대신 세리프 숫자 + 가는 세로선으로 둡니다.
+     배지가 6번 반복되면 제목보다 배지가 먼저 읽혀 위계가 뭉개집니다. */
   .card h2 .num {
-    display:inline-flex; align-items:center; justify-content:center;
-    min-width:26px; height:26px; padding:0 6px; border-radius:7px;
-    background: var(--brass); color:#fff; font-size:14px; font-weight:800;
-    font-family: var(--sans);
+    font-family: var(--serif); font-size:16px; font-weight:700;
+    color: var(--brass); font-variant-numeric: tabular-nums;
+    min-width:0.9em; text-align:right; line-height:1.5;
+    padding-right:11px; border-right:1px solid var(--line);
   }
   .eyebrow { font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--brass); font-weight:700; margin-bottom:6px; }
   .meta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
@@ -144,9 +146,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .guide ul { margin:0; padding-left:17px; }
   .guide li { margin-bottom:5px; }
   .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-  .step { background:#fffdf9; border:1px solid var(--line); border-radius:6px; padding:12px 14px 12px 12px; }
-  .step-n { font-family:var(--serif); font-size:22px; font-weight:800; color:var(--brass); line-height:1; }
-  .step-t { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); margin:4px 0 8px; }
+  .step { background:#fffdf9; border:1px solid var(--line); border-radius:6px; padding:12px 14px; }
+  .step-head { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+  .step-n { font-family:var(--serif); font-size:15px; font-weight:700; color:var(--brass);
+            font-variant-numeric: tabular-nums; line-height:1.5;
+            padding-right:9px; border-right:1px solid var(--line); }
+  .step-t { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); }
   .step ul { padding-left:15px; }
   .guide-first { margin-top:12px; padding:9px 12px; background:var(--paper-2); border-radius:4px; font-size:12.5px; }
   .guide-tree { margin:0; padding:11px 13px; background:#fffdf9; border:1px solid var(--line); border-radius:4px; font-family:var(--mono); font-size:11.5px; line-height:1.7; overflow-x:auto; white-space:pre; }
@@ -203,8 +208,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="guide">
         <div class="steps">
           <div class="step">
-            <div class="step-n">1</div>
-            <div class="step-t">자료 올리기</div>
+            <div class="step-head"><span class="step-n">1</span><span class="step-t">자료 올리기</span></div>
             <ul>
               <li><strong>취득명세서 엑셀</strong> → 2번 (위하고에서 엑셀로 변환해 받은 것)</li>
               <li><strong>견적서·이체확인증 사진</strong> → 3·4번 (올리면 판독창이 열립니다)</li>
@@ -212,16 +216,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
             </ul>
           </div>
           <div class="step">
-            <div class="step-n">2</div>
-            <div class="step-t">확인하기</div>
+            <div class="step-head"><span class="step-n">2</span><span class="step-t">확인하기</span></div>
             <ul>
               <li><strong>5번 대사표</strong> — 금액 자동 비교, ＋로 서류 첨부</li>
               <li><strong>6번 자동 점검</strong> — 공급시기·누락·차액 확인할 점</li>
             </ul>
           </div>
           <div class="step">
-            <div class="step-n">3</div>
-            <div class="step-t">넘기기</div>
+            <div class="step-head"><span class="step-n">3</span><span class="step-t">넘기기</span></div>
             <ul>
               <li><strong>⬇ 엑셀로 다운로드</strong> → 아래 폴더에 원본 사진과 함께 보관</li>
               <li>확인필요 건은 원본 대조 후 세무사님께 전달</li>
