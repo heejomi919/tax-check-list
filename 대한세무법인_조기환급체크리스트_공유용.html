@@ -368,9 +368,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </table></div>
   </div>
 
-  <!-- 견적서 현황 -->
+  <!-- 견적서 내역 -->
   <div class="card">
-    <h2><span class="num">3</span> 견적서 현황</h2>
+    <h2><span class="num">3</span> 견적서 내역</h2>
     <div class="subsection-toggle" onclick="toggleSubsection(this)"><span class="chev">▸</span> 자료 불러오기</div>
     <div class="subsection">
     <div class="hint">받은 견적서를 정리한 표(xlsx, csv)가 있으면 그대로 올려서 채울 수 있어요.</div>
@@ -396,7 +396,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="hint">아래에서 어떤 열이 거래처명 / 날짜 / 금액인지 확인하고 맞게 지정해주세요. (자동으로 추정해서 미리 선택해뒀습니다)</div>
       <div class="map-grid">
         <div class="field"><label>거래처명 열</label><select id="quotationsMapVendor"></select></div>
-        <div class="field"><label>작성일자 열</label><select id="quotationsMapDate"></select></div>
+        <div class="field"><label>견적일 열</label><select id="quotationsMapDate"></select></div>
         <div class="field"><label>금액 열</label><select id="quotationsMapAmount"></select></div>
         <div class="field"><label>세액 열 (선택, 금액과 합산)</label><select id="quotationsMapTax"><option value="-1">사용 안 함</option></select></div>
       </div>
@@ -416,7 +416,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <div class="table-wrap"><table style="margin-top:14px">
-      <thead><tr><th>공급자</th><th>작성일자</th><th style="text-align:right">견적금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
+      <thead><tr><th>거래처</th><th>견적일</th><th style="text-align:right">견적금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
       <tbody id="quotationBody"></tbody>
       <tfoot><tr class="totalrow"><td colspan="2">합계</td><td class="amount" id="quotationTotal">0원</td><td colspan="3"></td></tr></tfoot>
     </table></div>
@@ -460,7 +460,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <div class="table-wrap"><table style="margin-top:14px">
-      <thead><tr><th>수취자</th><th>송금일</th><th style="text-align:right">송금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
+      <thead><tr><th>거래처</th><th>송금일</th><th style="text-align:right">송금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
       <tbody id="transferBody"></tbody>
       <tfoot><tr class="totalrow"><td colspan="2">합계</td><td class="amount" id="transferTotal">0원</td><td colspan="3"></td></tr></tfoot>
     </table></div>
@@ -947,11 +947,11 @@ function renderReadPanel(){
     <div class="hint" style="margin:0">원본을 보면서 아래 세 칸만 채우면 표와 대사표에 바로 반영됩니다. 사진은 클릭하면 확대됩니다.</div>
     ${vendorPicks}
     <div class="field">
-      <label>${isQuote ? '공급자 (거래처)' : '수취자 (거래처)'}</label>
+      <label>거래처</label>
       <input id="readVendor" value="${escapeHtml(row.vendor||'')}" placeholder="세금계산서와 같은 상호로">
     </div>
     <div class="field">
-      <label>${isQuote ? '작성일자' : '송금일'}</label>
+      <label>${isQuote ? '견적일' : '송금일'}</label>
       <input id="readDate" value="${escapeHtml(row.date||'')}" placeholder="2026-06-23">
     </div>
     <div class="field">
@@ -1634,7 +1634,7 @@ function openMappingPanel(section){
   const { headers, dataRows } = pendingImport;
   const prefix = idPrefix(section);
   const vendorKw = ['상호','거래처','공급자','수취','예금주','성명','업체'];
-  const dateKw = ['작성일자','일자','날짜','거래일','이체일'];
+  const dateKw = ['작성일자','견적일','일자','날짜','거래일','이체일'];
   const totalKw = section==='transfers'
     ? ['이체금액','입금액','출금액','금액','합계']
     : ['합계','공급대가','총액'];
@@ -1837,8 +1837,8 @@ function exportExcel(){
   formulaCells.push({ r: invoiceTotalRow, c: 9, f: `SUM(J${invoiceStart+1}:J${invoiceEnd+1})`, v: invoiceTotalValue, t:'n' });
   push([]);
 
-  push(['3. 견적서 현황']);
-  push(['No','공급자','작성일자','견적금액','비고']);
+  push(['3. 견적서 내역']);
+  push(['No','거래처','견적일','견적금액','비고']);
   const quoteStart = rows.length;
   state.quotations.forEach((r,i)=>push([i+1, r.vendor, r.date, r.amount, r.note]));
   for (let i=0;i<BUFFER;i++) push(['','','','','']);
@@ -1849,7 +1849,7 @@ function exportExcel(){
   push([]);
 
   push(['4. 송금내역']);
-  push(['No','수취자','송금일','송금액','비고']);
+  push(['No','거래처','송금일','송금액','비고']);
   const transferStart = rows.length;
   state.transfers.forEach((r,i)=>push([i+1, r.vendor, r.date, r.amount, r.note]));
   for (let i=0;i<BUFFER;i++) push(['','','','','']);
