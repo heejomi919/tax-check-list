@@ -61,8 +61,15 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
   .section-divider::before, .section-divider::after { content:''; flex:1; height:1px; background: var(--line); }
   .stampbox { border:2px solid var(--brass); color:var(--brass); font-family:var(--serif); font-weight:700; font-size:13px; padding:6px 12px; border-radius:4px; transform:rotate(-3deg); white-space:nowrap; }
+  .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:18px 20px; margin-bottom:18px; box-shadow:0 1px 2px rgba(28,46,74,0.04); }
-  .card h2 { font-family: var(--serif); font-size:16px; margin:0 0 12px; color:var(--navy); }
+  .card h2 { font-family: var(--serif); font-size:19px; font-weight:800; margin:0 0 14px; color:var(--navy); letter-spacing:-0.01em; display:flex; align-items:center; gap:8px; }
+  .card h2 .num {
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:26px; height:26px; padding:0 6px; border-radius:7px;
+    background: var(--brass); color:#fff; font-size:14px; font-weight:800;
+    font-family: var(--sans);
+  }
   .eyebrow { font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--brass); font-weight:700; margin-bottom:6px; }
   .meta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   .field label { display:block; font-size:11.5px; color:#6b6355; margin-bottom:4px; }
@@ -75,8 +82,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .btn.ghost:hover { color:var(--warn); }
   .btn.small { padding:5px 10px; font-size:12.5px; }
   .row-gap { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  thead th { text-align:left; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8a8272; border-bottom:1px solid var(--line); padding:6px 8px; font-weight:600; }
+  table { width:100%; min-width:560px; border-collapse:collapse; font-size:13px; }
+  thead th { text-align:left; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8a8272; border-bottom:1px solid var(--line); padding:6px 8px; font-weight:600; white-space:nowrap; }
   tbody td { padding:6px 8px; border-bottom:1px solid #efece3; vertical-align:middle; }
   tbody tr:last-child td { border-bottom:none; }
   td input { width:100%; border:1px solid transparent; background:transparent; padding:4px 6px; border-radius:3px; font-size:13px; font-family:var(--sans); }
@@ -136,7 +143,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="meta-grid">
       <div class="field"><label>상호</label><input id="metaClient"></div>
       <div class="field"><label>담당자</label><input id="metaManager"></div>
-      <div class="field"><label>연도</label><input id="metaYear" placeholder="예: 2026" inputmode="numeric"></div>
+      <div class="field"><label>연도</label><input id="metaYear" inputmode="numeric"></div>
       <div class="field">
         <label>기간 구분</label>
         <select id="metaPeriodType">
@@ -159,7 +166,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       </div>
       <div class="field">
         <label>관할세무서</label>
-        <input id="metaTaxOffice" placeholder="예: 분당세무서">
+        <input id="metaTaxOffice" >
       </div>
       <div class="field"><label>담당조사관</label><input id="metaOfficer"></div>
       <div class="field"><label>조사관 연락처</label><input id="metaOfficerPhone"></div>
@@ -167,7 +174,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
     <div class="hint" style="margin-top:4px">관할세무서를 모르면, 주소나 동네 이름으로 검색해보세요 (예: 분당구, 야탑동, 중원구).</div>
     <div class="map-grid" style="grid-template-columns: 2fr auto; margin-bottom:0;">
-      <div class="field"><input id="taxOfficeSearch" placeholder="예: 성남시 분당구 야탑동" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchTaxOffice();}"></div>
+      <div class="field"><input id="taxOfficeSearch" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchTaxOffice();}"></div>
       <div class="field" style="display:flex; align-items:flex-end;"><button class="btn secondary small" onclick="searchTaxOffice()">검색</button></div>
     </div>
     <div id="taxOfficeResults" class="hint"></div>
@@ -182,14 +189,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <!-- 매출현황 -->
   <div class="card collapsed">
-    <h2 class="card-toggle" onclick="toggleCard(this)"><span class="chev">▸</span> 1. 매출현황</h2>
+    <h2 class="card-toggle" onclick="toggleCard(this)"><span class="chev">▸</span> <span class="num">1</span> 매출현황</h2>
     <div class="card-body">
     <div class="hint">사장님이 보내주신 월별 POS 자료를 보고, 결제수단별 매출을 그대로 입력하면 아래 합계가 자동으로 계산돼요. 필요 없는 항목은 지우고, 없는 항목은 추가하세요.</div>
-    <table>
+
+    <textarea id="salesQuickArea" class="pastearea" rows="4" placeholder="한 줄에 하나씩, 표 순서 그대로 입력하세요"></textarea>
+    <div class="row-gap" style="margin-top:6px">
+      <button class="btn secondary small" onclick="applyQuickSales()">표에 적용</button>
+    </div>
+
+    <div class="table-wrap"><table style="margin-top:14px">
       <thead><tr><th>결제수단</th><th style="text-align:right">금액</th><th></th></tr></thead>
       <tbody id="salesBody"></tbody>
       <tfoot><tr class="totalrow"><td>실제매출 합계</td><td class="amount" id="salesActualTotal">0원</td><td></td></tr></tfoot>
-    </table>
+    </table></div>
     <button class="btn secondary small" style="margin-top:10px" onclick="addSalesItem()">+ 결제수단 추가</button>
 
     <div class="meta-grid" style="margin-top:16px">
@@ -206,7 +219,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <!-- 세금계산서합계표 업로드 -->
   <div class="card">
-    <h2>2. 건물등감가상각취득명세서</h2>
+    <h2><span class="num">2</span> 건물등감가상각취득명세서</h2>
+    <div class="hint">위하고에서 이 명세서를 <strong>엑셀 파일로 변환해서 다운로드</strong>해서 올려주세요 (화면 캡처나 PDF는 자동으로 안 채워져요).</div>
     <div class="subsection-toggle" onclick="toggleSubsection(this)"><span class="chev">▸</span> 자료 불러오기</div>
     <div class="subsection">
     <div class="hint">국세청 "건물등감가상각자산취득명세서" 형식(월/일/상호/사업자등록번호/자산구분/공급가액/세액/건수/유형) 그대로 올리면 자동으로 표에 채워집니다. 열을 따로 지정할 필요 없어요.</div>
@@ -223,20 +237,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
     </div>
 
-    <table style="margin-top:14px">
+    <div class="table-wrap"><table style="margin-top:14px; min-width:820px">
       <thead><tr>
         <th>취득일자</th><th>상호</th><th>사업자등록번호</th><th>자산구분</th>
         <th style="text-align:right">공급가액</th><th style="text-align:right">세액</th>
         <th>건수</th><th>유형</th><th></th>
       </tr></thead>
       <tbody id="invoiceBody"></tbody>
-    </table>
+    </table></div>
   </div>
 
   <!-- 견적서 현황 -->
   <div class="card">
-    <h2>3. 견적서 현황</h2>
-    <div class="subsection-toggle" onclick="toggleSubsection(this)"><span class="chev">▸</span> 자료 불러오기 (합계표 업로드 · 붙여넣기 · 사진첨부)</div>
+    <h2><span class="num">3</span> 견적서 현황</h2>
+    <div class="subsection-toggle" onclick="toggleSubsection(this)"><span class="chev">▸</span> 자료 불러오기</div>
     <div class="subsection">
     <div class="hint">받은 견적서를 정리한 표(xlsx, csv)가 있으면 그대로 올려서 채울 수 있어요.</div>
     <div class="dropzone" onclick="document.getElementById('quoteFile').click()">
@@ -280,17 +294,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
     </div>
 
-    <table style="margin-top:14px">
+    <div class="table-wrap"><table style="margin-top:14px">
       <thead><tr><th>공급자</th><th>작성일자</th><th style="text-align:right">견적금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
       <tbody id="quotationBody"></tbody>
       <tfoot><tr class="totalrow"><td colspan="2">합계</td><td class="amount" id="quotationTotal">0원</td><td colspan="3"></td></tr></tfoot>
-    </table>
+    </table></div>
     <button class="btn secondary small" style="margin-top:10px" onclick="addRow('quotations')">+ 직접 추가</button>
   </div>
 
   <!-- 송금내역 -->
   <div class="card">
-    <h2>4. 송금내역</h2>
+    <h2><span class="num">4</span> 송금내역</h2>
     <div class="subsection-toggle" onclick="toggleSubsection(this)"><span class="chev">▸</span> 자료 불러오기 (붙여넣기 · 사진첨부)</div>
     <div class="subsection">
     <div class="hint">이체확인증을 보면서 직접 입력하거나, 표를 복사해서 붙여넣거나, 사진·PDF를 첨부해서 참고할 수 있어요.</div>
@@ -324,33 +338,19 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
     </div>
 
-    <table style="margin-top:14px">
+    <div class="table-wrap"><table style="margin-top:14px">
       <thead><tr><th>수취자</th><th>송금일</th><th style="text-align:right">송금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
       <tbody id="transferBody"></tbody>
       <tfoot><tr class="totalrow"><td colspan="2">합계</td><td class="amount" id="transferTotal">0원</td><td colspan="3"></td></tr></tfoot>
-    </table>
+    </table></div>
     <button class="btn secondary small" style="margin-top:10px" onclick="addRow('transfers')">+ 직접 추가</button>
-  </div>
-
-  <!-- 거래처 별칭 관리 -->
-  <div class="card collapsed">
-    <h2 class="card-toggle" onclick="toggleCard(this)"><span class="chev">▸</span> 거래처 별칭 관리</h2>
-    <div class="card-body">
-    <div class="hint">세금계산서엔 회사명(예: 우리종합주방)이, 통장엔 대표자 개인명(예: 유상진)이 찍히는 경우가 많아요. 같은 거래처인데 이름이 다르게 찍히는 경우 여기에 등록해두면 대사표에서 하나로 합쳐서 비교합니다.</div>
-    <div id="aliasList" style="margin-bottom:12px"></div>
-    <div class="map-grid" style="grid-template-columns: 1fr 1fr auto;">
-      <div class="field"><label>대표 거래처명 (세금계산서 기준 권장)</label><input id="aliasCanonical" placeholder="예: 우리종합주방"></div>
-      <div class="field"><label>같은 거래처의 다른 이름 (쉼표로 구분)</label><input id="aliasAliases" placeholder="예: 유상진"></div>
-      <div class="field" style="display:flex; align-items:flex-end;"><button class="btn secondary small" onclick="addAliasGroup()">+ 등록</button></div>
-    </div>
-    </div>
   </div>
 
   <!-- 대사표: 3방향 크로스체크 -->
   <div class="card">
-    <h2>5. 건물등감가상각취득명세서·견적서·송금 대사표</h2>
+    <h2><span class="num">5</span> 건물등감가상각취득명세서·견적서·송금 대사표</h2>
     <div class="hint">거래처별로 세금계산서 합계·견적서 합계·송금 합계를 한 번에 비교해요. 셋 다 같으면 "일치", 하나라도 다르면 "확인필요"로 표시돼요. 계약금·잔금처럼 나눠 보낸 경우엔 확인필요가 떠도 정상일 수 있어요.</div>
-    <table>
+    <div class="table-wrap"><table style="min-width:760px">
       <thead><tr>
         <th>No</th>
         <th>거래처</th>
@@ -362,13 +362,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <th>비고</th>
       </tr></thead>
       <tbody id="reconBody"></tbody>
-    </table>
+    </table></div>
   </div>
 
-  <div class="footer-note">
-    이 파일은 인터넷 연결 없이도 여러분 컴퓨터 브라우저에서 완전히 동작합니다 (엑셀 처리 기능도 파일 안에 들어있어요). 저장한 내용은 이 컴퓨터의 이 브라우저에만 남고 다른 직원 컴퓨터와는 공유되지 않으니, 자료를 함께 봐야 한다면 엑셀로 내려받아 전달해주세요. 첨부한 이체확인증 사진·PDF는 지금 화면에 열려있는 동안만 보이고, "저장"을 눌러도 사진 자체는 저장되지 않아요(파일명만 비고에 남습니다) — 나중에 다시 봐야 한다면 원본 파일을 따로 보관해주세요. 자동으로 불러온 금액·날짜도 신고 전에 원본 서류와 한 번 더 확인해주세요.
-  </div>
-</div>
+
 
 <script>
 /* ------------------------------------------------------------------ */
@@ -380,13 +377,12 @@ let state = {
   quotations: [],
   transfers: [],
   sales: { items: [], reported: null, note: '' },
-  aliasGroups: [], // [{ id, canonical, aliases: [str,...] }]
   reconNotes: {}, // { [거래처명]: '비고 텍스트' }
   reconDocs: {} // { [거래처명]: { contract:bool, quote:bool, deposit:bool } }
 };
 let pendingImport = null; // { section, headers, rows(2D, 데이터행부터) }
 
-const DEFAULT_SALES_METHODS = ['카드(카운터)','카드(온라인)','카드(키오스크)','계좌이체','현금','현금(키오스크)','지역화폐'];
+const DEFAULT_SALES_METHODS = ['카드(카운터)','지역화폐(카운터)','카드(다른단말기)','카드(온라인)','계좌이체','현금','현금(키오스크)','카드(키오스크)','지역화폐(키오스크)'];
 
 /* 전국 세무서 관할구역 (2026년 기준, 국세청 공개자료 기준. 부산 도심 5개 세무서는
    관할 경계 변경 이력이 많아 최신 자료를 확인하지 못해 목록에서 제외했습니다.) */
@@ -606,15 +602,7 @@ function idPrefix(section){
   return 'transfers';
 }
 function resolveVendor(name){
-  const n = (name||'').trim();
-  if (!n) return n;
-  for (const g of state.aliasGroups){
-    const canon = (g.canonical||'').trim();
-    if (!canon) continue;
-    if (n === canon) return canon;
-    if ((g.aliases||[]).some(a => a.trim() === n)) return canon;
-  }
-  return n;
+  return (name||'').trim();
 }
 function guessColumn(headers, keywords){
   for (let i=0;i<headers.length;i++){
@@ -765,7 +753,7 @@ function renderTripleRecon(bodyId){
         ${docCheck('quote','견적서')}
         ${docCheck('deposit','입금증')}
       </div></td>
-      <td><input value="${escapeHtml(noteVal)}" placeholder="예: 계약금 별도 지급" oninput="onReconNoteChange('${vKey}', this.value)"></td>
+      <td><input value="${escapeHtml(noteVal)}" oninput="onReconNoteChange('${vKey}', this.value)"></td>
     </tr>`;
   }).join('');
 }
@@ -868,49 +856,38 @@ function seedDefaultSalesItems(){
   state.sales.items = DEFAULT_SALES_METHODS.map(m => ({ id: uid(), method: m, amount: null }));
 }
 
-/* ---------------- 거래처 별칭 관리 ---------------- */
-function renderAliasList(){
-  const el = document.getElementById('aliasList');
-  if (state.aliasGroups.length === 0){
-    el.innerHTML = `<div class="hint" style="margin:0">등록된 별칭이 없습니다.</div>`;
+function applyQuickSales(){
+  const ta = document.getElementById('salesQuickArea');
+  const text = ta.value.trim();
+  if (!text){
+    alert('먼저 금액을 순서대로 입력하거나 붙여넣어주세요.');
     return;
   }
-  el.innerHTML = state.aliasGroups.map(g => `
-    <div class="chip" style="width:100%; justify-content:space-between; margin-bottom:6px; border-radius:6px;">
-      <span><strong>${escapeHtml(g.canonical)}</strong> = ${escapeHtml((g.aliases||[]).join(', ')) || '(별칭 없음)'}</span>
-      <button onclick="removeAliasGroup('${g.id}')">✕</button>
-    </div>
-  `).join('');
-}
-function addAliasGroup(){
-  const canonical = document.getElementById('aliasCanonical').value.trim();
-  const aliasesRaw = document.getElementById('aliasAliases').value.trim();
-  if (!canonical || !aliasesRaw){
-    alert('대표 거래처명과 별칭을 모두 입력해주세요.');
+  // 줄바꿈, 쉼표, 탭, 공백 등 어떤 구분자로 입력해도 숫자만 순서대로 추출
+  const numbers = text.split(/[\n,\t]+/).map(s => s.trim()).filter(s => s !== '');
+  if (numbers.length === 0){
+    alert('숫자를 찾지 못했어요.');
     return;
   }
-  const aliases = aliasesRaw.split(',').map(s=>s.trim()).filter(Boolean);
-  state.aliasGroups.push({ id: uid(), canonical, aliases });
-  document.getElementById('aliasCanonical').value = '';
-  document.getElementById('aliasAliases').value = '';
-  renderAliasList();
-  updateDerived();
+  const count = Math.min(numbers.length, state.sales.items.length);
+  for (let i = 0; i < count; i++){
+    state.sales.items[i].amount = parseAmountLoose(numbers[i]);
+  }
+  renderSalesTable();
+  ta.value = '';
+  alert(`${count}개 항목에 금액을 채웠어요. 순서가 맞는지 표에서 한 번 확인해주세요.`);
 }
-function removeAliasGroup(id){
-  state.aliasGroups = state.aliasGroups.filter(g=>g.id!==id);
-  renderAliasList();
-  updateDerived();
-}
+
 
 function resetAll(){
   state = {
     meta:{clientName:'',manager:'',year:'',periodType:'',month:'',taxOffice:'',officer:'',officerPhone:''}, invoices:[], quotations:[], transfers:[],
-    sales:{items:[],reported:null,note:''}, aliasGroups:[], reconNotes:{}, reconDocs:{}
+    sales:{items:[],reported:null,note:''}, reconNotes:{}, reconDocs:{}
   };
   seedDefaultSalesItems();
   syncMetaInputs();
   renderTable('invoices'); renderTable('quotations'); renderTable('transfers');
-  renderSalesTable(); renderAliasList();
+  renderSalesTable();
 }
 function syncMetaInputs(){
   document.getElementById('metaClient').value = state.meta.clientName;
@@ -1083,8 +1060,8 @@ function openMappingPanel(section){
 
   // 미리보기 (최대 5행)
   const previewRows = dataRows.slice(0, 5);
-  const previewHtml = `<table><thead><tr>${headers.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
-    <tbody>${previewRows.map(r=>`<tr>${headers.map((_,i)=>`<td>${escapeHtml(r[i])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const previewHtml = `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+    <tbody>${previewRows.map(r=>`<tr>${headers.map((_,i)=>`<td>${escapeHtml(r[i])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   document.getElementById(prefix+'Preview').innerHTML = previewHtml;
 
   document.getElementById(mapPanelId(section)).classList.add('open');
@@ -1165,7 +1142,6 @@ function loadClient(key){
     quotations: payload.quotations || [],
     transfers: payload.transfers || [],
     sales: payload.sales && payload.sales.items ? payload.sales : { items: [], reported: payload.sales?.reported ?? null, note: payload.sales?.note || '' },
-    aliasGroups: payload.aliasGroups || [],
     reconNotes: payload.reconNotes || {},
     reconDocs: payload.reconDocs || {}
   };
@@ -1175,7 +1151,6 @@ function loadClient(key){
   renderTable('quotations');
   renderTable('transfers');
   renderSalesTable();
-  renderAliasList();
 }
 function deleteClient(key, evt){
   evt.stopPropagation();
@@ -1273,13 +1248,6 @@ function exportExcel(){
   formulaCells.push({ r: transferTotalRow, c: 3, f: `SUM(D${transferStart+1}:D${transferEnd+1})`, v: transferTotalValue, t:'n' });
   push([]);
 
-  if (state.aliasGroups.length > 0){
-    push(['거래처 별칭 (같은 거래처로 합산 처리됨)']);
-    push(['대표 거래처명','별칭']);
-    state.aliasGroups.forEach(g => push([g.canonical, (g.aliases||[]).join(', ')]));
-    push([]);
-  }
-
   const trRange = `$B$${transferStart+1}:$B$${transferEnd+1}`;
   const trAmtRange = `$D$${transferStart+1}:$D$${transferEnd+1}`;
   const invRange = `$C$${invoiceStart+1}:$C$${invoiceEnd+1}`;
@@ -1338,7 +1306,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderTable('quotations');
   renderTable('transfers');
   renderSalesTable();
-  renderAliasList();
   renderSavedList();
 });
 </script>
