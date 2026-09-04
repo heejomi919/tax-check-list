@@ -98,9 +98,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .badge.ok { background:var(--ok-bg); color:var(--ok); }
   .badge.warn { background:var(--warn-bg); color:var(--warn); }
   .badge.pending { background:#efece3; color:#8a8272; }
-  .doc-check-group { display:flex; flex-direction:column; gap:2px; font-size:11.5px; color:var(--ink); white-space:nowrap; }
-  .doc-check-group label { display:flex; align-items:center; gap:4px; cursor:pointer; }
+  .doc-check-group { display:flex; flex-direction:column; gap:3px; font-size:11.5px; color:var(--ink); white-space:nowrap; }
+  .doc-check-item { display:flex; align-items:center; gap:4px; }
+  .doc-check-item label { display:flex; align-items:center; gap:4px; cursor:pointer; }
   .doc-check-group input[type="checkbox"] { margin:0; }
+  .audit-list { margin:0; padding-left:16px; font-size:12px; line-height:1.6; }
+  .audit-list li.warn { color:var(--warn); }
+  .audit-list li.info { color:#6b6455; }
+  .recon-doc-files { display:inline-flex; gap:2px; }
+  .recon-doc-files a { text-decoration:none; }
+  .doc-attach-btn { border:none; background:transparent; color:#8a8272; cursor:pointer; font-size:12px; padding:0 2px; line-height:1; }
+  .doc-attach-btn:hover { color:var(--navy-2); }
   .savedlist { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
   .chip { display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:20px; padding:4px 6px 4px 12px; font-size:12.5px; background:#fffdf9; cursor:pointer; }
   .chip button { border:none; background:transparent; cursor:pointer; color:#8a8272; }
@@ -349,7 +357,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <!-- 대사표: 3방향 크로스체크 -->
   <div class="card">
     <h2><span class="num">5</span> 건물등감가상각취득명세서·견적서·송금 대사표</h2>
-    <div class="hint">거래처별로 세금계산서 합계·견적서 합계·송금 합계를 한 번에 비교해요. 셋 다 같으면 "일치", 하나라도 다르면 "확인필요"로 표시돼요. 계약금·잔금처럼 나눠 보낸 경우엔 확인필요가 떠도 정상일 수 있어요.</div>
+    <div class="hint">거래처별로 세금계산서 합계·견적서 합계·송금 합계를 한 번에 비교해요. 셋 다 같으면 "일치", 하나라도 다르면 "확인필요"로 표시돼요. 계약금·잔금처럼 나눠 보낸 경우엔 확인필요가 떠도 정상일 수 있어요. 첨부서류 칸의 "+"를 누르면 계약서·견적서·입금증 파일(사진/PDF)을 거래처별로 바로 첨부할 수 있어요.</div>
+    <input type="file" id="reconDocFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.webp" style="display:none" onchange="handleReconDocFileInput(event)">
     <div class="table-wrap"><table style="min-width:760px">
       <thead><tr>
         <th>No</th>
@@ -362,6 +371,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <th>비고</th>
       </tr></thead>
       <tbody id="reconBody"></tbody>
+    </table></div>
+  </div>
+
+  <!-- 자동 점검: 공급시기·자료누락·금액차이 -->
+  <div class="card">
+    <h2><span class="num">6</span> 자동 점검 <span style="font-weight:400; font-size:13px; color:#8a8272">(공급시기·자료누락·금액차이)</span></h2>
+    <div class="hint">입력된 <strong>날짜와 금액</strong>만 보고 거래처별로 확인할 점을 자동으로 찾아줘요. 날짜를 비워둔 자료는 날짜 점검에서 빠지고, <strong>추정이라 오탐이 있을 수 있으니</strong> 반드시 원본 서류로 확인해주세요.</div>
+    <div class="table-wrap"><table style="min-width:720px">
+      <thead><tr>
+        <th style="width:150px">거래처</th>
+        <th style="width:90px">등급</th>
+        <th>확인할 점</th>
+      </tr></thead>
+      <tbody id="auditBody"></tbody>
     </table></div>
   </div>
 
@@ -378,7 +401,8 @@ let state = {
   transfers: [],
   sales: { items: [], reported: null, note: '' },
   reconNotes: {}, // { [거래처명]: '비고 텍스트' }
-  reconDocs: {} // { [거래처명]: { contract:bool, quote:bool, deposit:bool } }
+  reconDocs: {}, // { [거래처명]: { contract:bool, quote:bool, deposit:bool } }
+  reconAttachments: {} // { [거래처명]: { contract:[{url,name}], quote:[...], deposit:[...] } }
 };
 let pendingImport = null; // { section, headers, rows(2D, 데이터행부터) }
 
@@ -562,6 +586,10 @@ function won(n){ if(n===null||n===undefined||isNaN(n)) return '0원'; return new
 function numStr(n){ if(n===null||n===undefined||n===''||isNaN(n)) return ''; return new Intl.NumberFormat('ko-KR').format(Math.round(Number(n))); }
 function escapeHtml(s){ return (s===undefined||s===null)?'':String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function sanitizeKey(s){ return (s||'').trim().replace(/[\s/\\'"]+/g,'_').slice(0,60) || 'unnamed'; }
+/* onclick="fn('...')" 처럼 HTML 속성 안의 JS 문자열로 넘길 값 (거래처명에 ' " < > 가 있어도 안전) */
+function jsAttr(s){
+  return escapeHtml(String(s===undefined||s===null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"));
+}
 function parseAmountLoose(v){
   if (v===undefined||v===null||v==='') return null;
   if (typeof v === 'number') return v;
@@ -737,10 +765,19 @@ function renderTripleRecon(bodyId){
     } else {
       badgeClass = 'warn'; badgeLabel = '⚠ 확인필요';
     }
-    const vKey = v.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const vKey = jsAttr(v);
     const noteVal = state.reconNotes[v] || '';
     const docs = state.reconDocs[v] || {};
-    const docCheck = (key, label) => `<label><input type="checkbox" ${docs[key]?'checked':''} onchange="onReconDocToggle('${vKey}','${key}',this.checked)"> ${label}</label>`;
+    const attachments = state.reconAttachments[v] || {};
+    const docCheck = (key, label) => {
+      const files = attachments[key] || [];
+      const fileLinks = files.map((f, fi) => `<a href="${f.url}" target="_blank" title="${escapeHtml(f.name||'')}" onclick="event.stopPropagation()">📎${files.length>1?(fi+1):''}</a>`).join('');
+      return `<div class="doc-check-item">
+        <label><input type="checkbox" ${docs[key]?'checked':''} onchange="onReconDocToggle('${vKey}','${key}',this.checked)"> ${label}</label>
+        <span class="recon-doc-files">${fileLinks}</span>
+        <button type="button" class="doc-attach-btn" title="${label} 파일 첨부" onclick="triggerReconDocAttach('${vKey}','${key}')">＋</button>
+      </div>`;
+    };
     return `<tr>
       <td>${idx + 1}</td>
       <td>${escapeHtml(v)}</td>
@@ -767,6 +804,164 @@ function onReconNoteChange(vendor, value){
   state.reconNotes[vendor] = value;
 }
 
+/* ---------------- 대사표: 거래처별 계약서/견적서/입금증 파일 첨부 ---------------- */
+let reconDocFileTarget = null;
+function triggerReconDocAttach(vendor, key){
+  reconDocFileTarget = { vendor, key };
+  document.getElementById('reconDocFileInput').click();
+}
+function handleReconDocFileInput(evt){
+  const files = Array.from(evt.target.files || []);
+  const target = reconDocFileTarget;
+  reconDocFileTarget = null;
+  evt.target.value = '';
+  if (!target || files.length === 0) return;
+  const { vendor, key } = target;
+  if (!state.reconAttachments[vendor]) state.reconAttachments[vendor] = {};
+  if (!state.reconAttachments[vendor][key]) state.reconAttachments[vendor][key] = [];
+  files.forEach(file => {
+    state.reconAttachments[vendor][key].push({ url: URL.createObjectURL(file), name: file.name });
+  });
+  if (!state.reconDocs[vendor]) state.reconDocs[vendor] = {};
+  state.reconDocs[vendor][key] = true;
+  renderTripleRecon('reconBody');
+  renderAudit('auditBody');
+}
+
+/* ------------------------------------------------------------------ */
+/* 자동 점검 (공급시기·자료누락·금액차이)                                     */
+/* ------------------------------------------------------------------ */
+/* 'YYYY-MM-DD', 'YYYY.M.D', 'MM-DD'(연도는 거래처정보의 연도 사용) 등을 관대하게 해석 */
+function parseDateLoose(v){
+  if (v === undefined || v === null || v === '') return null;
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/);
+  if (m) return { y:+m[1], m:+m[2], d:+m[3] };
+  m = s.match(/^(\d{1,2})[-./](\d{1,2})$/);
+  if (m){
+    const y = parseInt(state.meta.year, 10);
+    if (!y) return null; // 연도를 모르면 날짜 점검에서 제외
+    return { y, m:+m[1], d:+m[2] };
+  }
+  return null;
+}
+function dateTs(p){ return Date.UTC(p.y, p.m - 1, p.d); }
+function fmtMd(p){ return `${p.m}/${p.d}`; }
+function dayDiff(a, b){ return Math.round((dateTs(a) - dateTs(b)) / 86400000); }
+
+/* 거래처 하나에 대해 확인할 점을 찾아 [{level:'warn'|'info', text}] 로 반환 */
+function auditVendor(v){
+  const issues = [];
+  const inv = state.invoices.filter(r => resolveVendor(r.vendor) === v);
+  const qs  = state.quotations.filter(r => resolveVendor(r.vendor) === v);
+  const trs = state.transfers.filter(r => resolveVendor(r.vendor) === v);
+  const docs = state.reconDocs[v] || {};
+  const sum = arr => arr.reduce((s,r) => s + (Number(r.amount)||0), 0);
+  const invSum = sum(inv), qSum = sum(qs), trSum = sum(trs);
+
+  /* 1) 자료 누락 / 미확인 */
+  const missingHard = [];
+  const missingSoft = [];
+  if (inv.length === 0) missingHard.push('세금계산서(취득명세서)');
+  if (trs.length === 0) missingHard.push('송금내역');
+  if (qs.length === 0) missingSoft.push('견적서');
+  if (!docs.contract) missingSoft.push('계약서');
+  if (missingHard.length) issues.push({ level:'warn', text:`자료 없음: ${missingHard.join(', ')} — 조기환급 소명자료로 필요합니다` });
+  if (missingSoft.length) issues.push({ level:'info', text:`미첨부/미확인: ${missingSoft.join(', ')}` });
+
+  /* 2) 금액 차이 */
+  if (inv.length && trs.length && invSum !== trSum){
+    issues.push({ level:'warn', text:`세금계산서 ${won(invSum)} ↔ 송금 ${won(trSum)} (차액 ${won(Math.abs(invSum-trSum))}) — 잔금 미지급·분할지급 여부 확인` });
+  }
+  if (inv.length && qs.length && invSum !== qSum){
+    issues.push({ level:'info', text:`세금계산서 ${won(invSum)} ↔ 견적서 ${won(qSum)} (차액 ${won(Math.abs(invSum-qSum))}) — 추가공사·변경계약 여부 확인` });
+  }
+
+  /* 3) 공급시기 관련 날짜 점검 */
+  const invD = inv.map(r => parseDateLoose(r.date)).filter(Boolean).sort((a,b)=>dateTs(a)-dateTs(b));
+  const qD   = qs.map(r => parseDateLoose(r.date)).filter(Boolean).sort((a,b)=>dateTs(a)-dateTs(b));
+  const trD  = trs.map(r => parseDateLoose(r.date)).filter(Boolean).sort((a,b)=>dateTs(a)-dateTs(b));
+
+  const noDateCount = (inv.length - invD.length) + (qs.length - qD.length) + (trs.length - trD.length);
+  if (noDateCount > 0){
+    issues.push({ level:'info', text:`날짜 미입력 ${noDateCount}건 — 날짜 점검에서 제외됨 (연도·날짜를 넣으면 함께 점검됩니다)` });
+  }
+
+  const targetMonth = parseInt(state.meta.month, 10);
+  if (targetMonth && invD.length){
+    const outside = invD.filter(p => p.m !== targetMonth);
+    if (outside.length){
+      issues.push({ level:'warn', text:`세금계산서 작성일 ${outside.map(fmtMd).join(', ')}이(가) 조기환급 대상월(${targetMonth}월) 밖 — 신고 대상기간 확인` });
+    }
+  }
+
+  if (invD.length && trD.length){
+    const firstInv = invD[0], firstTr = trD[0], lastTr = trD[trD.length-1];
+    const preDays = dayDiff(firstInv, firstTr); // 송금이 세금계산서보다 먼저면 양수
+    if (preDays > 0){
+      issues.push({
+        level: preDays >= 30 ? 'warn' : 'info',
+        text: `송금일(${fmtMd(firstTr)})이 세금계산서 작성일(${fmtMd(firstInv)})보다 ${preDays}일 빠름 — 선급금·중간지급조건부 해당 여부와 공급시기 확인`
+      });
+    }
+    const lateDays = dayDiff(lastTr, invD[invD.length-1]);
+    if (lateDays >= 30){
+      issues.push({ level:'info', text:`마지막 송금일(${fmtMd(lastTr)})이 세금계산서 작성일보다 ${lateDays}일 늦음 — 잔금 지급시기·계약조건 확인` });
+    }
+  }
+
+  if (invD.length && qD.length){
+    const lateQuote = qD.filter(p => dayDiff(p, invD[0]) > 0);
+    if (lateQuote.length){
+      issues.push({ level:'warn', text:`견적서일(${lateQuote.map(fmtMd).join(', ')})이 세금계산서 작성일(${fmtMd(invD[0])})보다 늦음 — 서류 일자 앞뒤 확인` });
+    }
+  }
+
+  return issues;
+}
+
+function auditVendorList(){
+  return Array.from(new Set([
+    ...state.invoices.map(r=>resolveVendor(r.vendor)).filter(Boolean),
+    ...state.quotations.map(r=>resolveVendor(r.vendor)).filter(Boolean),
+    ...state.transfers.map(r=>resolveVendor(r.vendor)).filter(Boolean)
+  ]));
+}
+
+function auditGrade(issues){
+  if (issues.some(i => i.level === 'warn')) return { cls:'warn', label:'⚠ 확인필요' };
+  if (issues.length) return { cls:'pending', label:'참고' };
+  return { cls:'ok', label:'✓ 이상없음' };
+}
+
+function renderAudit(bodyId){
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  const vendors = auditVendorList();
+  if (vendors.length === 0){
+    body.innerHTML = `<tr><td colspan="3" style="color:#8a8272">거래처 자료를 입력하면 확인할 점을 자동으로 찾아드려요.</td></tr>`;
+    return;
+  }
+  // 확인필요 거래처를 위로
+  const rows = vendors.map(v => ({ v, issues: auditVendor(v) }));
+  rows.sort((a,b) => {
+    const rank = x => x.issues.some(i=>i.level==='warn') ? 0 : (x.issues.length ? 1 : 2);
+    return rank(a) - rank(b);
+  });
+  body.innerHTML = rows.map(({v, issues}) => {
+    const g = auditGrade(issues);
+    const sorted = issues.slice().sort((a,b) => (a.level==='warn'?0:1) - (b.level==='warn'?0:1));
+    const list = sorted.length
+      ? `<ul class="audit-list">${sorted.map(i => `<li class="${i.level}">${escapeHtml(i.text)}</li>`).join('')}</ul>`
+      : `<span style="color:#8a8272">입력된 자료 기준으로 특이사항 없음</span>`;
+    return `<tr>
+      <td>${escapeHtml(v)}</td>
+      <td><span class="badge ${g.cls}">${g.label}</span></td>
+      <td>${list}</td>
+    </tr>`;
+  }).join('');
+}
+
 function updateDerived(){
   const invoiceTotal = state.invoices.reduce((s,r)=>s+(Number(r.amount)||0),0);
   const quotationTotal = state.quotations.reduce((s,r)=>s+(Number(r.amount)||0),0);
@@ -778,6 +973,7 @@ function updateDerived(){
   document.getElementById('transferTotal').textContent = won(transferTotal);
 
   renderTripleRecon('reconBody');
+  renderAudit('auditBody');
 
   // 매출현황 합계/차이
   const actualTotal = state.sales.items.reduce((s,r)=>s+(Number(r.amount)||0),0);
@@ -882,7 +1078,7 @@ function applyQuickSales(){
 function resetAll(){
   state = {
     meta:{clientName:'',manager:'',year:'',periodType:'',month:'',taxOffice:'',officer:'',officerPhone:''}, invoices:[], quotations:[], transfers:[],
-    sales:{items:[],reported:null,note:''}, reconNotes:{}, reconDocs:{}
+    sales:{items:[],reported:null,note:''}, reconNotes:{}, reconDocs:{}, reconAttachments:{}
   };
   seedDefaultSalesItems();
   syncMetaInputs();
@@ -904,12 +1100,14 @@ function syncMetaInputs(){
 ['metaClient','metaManager','metaYear','metaPeriodType','metaMonth','metaTaxOffice','metaOfficer','metaOfficerPhone'].forEach(idName=>{
   document.addEventListener('DOMContentLoaded', ()=>{
     const map = { metaClient:'clientName', metaManager:'manager', metaYear:'year', metaPeriodType:'periodType', metaMonth:'month', metaTaxOffice:'taxOffice', metaOfficer:'officer', metaOfficerPhone:'officerPhone' };
-    document.getElementById(idName).addEventListener('input', e=>{
+    // 연도·대상월은 자동 점검(공급시기)의 기준이라 바뀌면 점검표를 다시 그림
+    const affectsAudit = (idName === 'metaYear' || idName === 'metaMonth');
+    const apply = e => {
       state.meta[map[idName]] = e.target.value;
-    });
-    document.getElementById(idName).addEventListener('change', e=>{
-      state.meta[map[idName]] = e.target.value;
-    });
+      if (affectsAudit) renderAudit('auditBody');
+    };
+    document.getElementById(idName).addEventListener('input', apply);
+    document.getElementById(idName).addEventListener('change', apply);
   });
 });
 
@@ -1143,7 +1341,8 @@ function loadClient(key){
     transfers: payload.transfers || [],
     sales: payload.sales && payload.sales.items ? payload.sales : { items: [], reported: payload.sales?.reported ?? null, note: payload.sales?.note || '' },
     reconNotes: payload.reconNotes || {},
-    reconDocs: payload.reconDocs || {}
+    reconDocs: payload.reconDocs || {},
+    reconAttachments: payload.reconAttachments || {}
   };
   if (!state.sales.items || state.sales.items.length === 0) seedDefaultSalesItems();
   syncMetaInputs();
@@ -1271,7 +1470,11 @@ function exportExcel(){
     const trSum = vendorName ? sumFor(transferResolved, vendorName) : '';
     const status = vendorName ? ((invSum === quoteSum && quoteSum === trSum) ? '일치' : '확인필요') : '';
     const docs = vendorName ? (state.reconDocs[vendorName] || {}) : {};
-    const docsText = Object.keys(docLabels).filter(k => docs[k]).map(k => docLabels[k]).join(', ');
+    const atts = vendorName ? (state.reconAttachments[vendorName] || {}) : {};
+    const docsText = Object.keys(docLabels).filter(k => docs[k]).map(k => {
+      const files = atts[k] || [];
+      return files.length ? `${docLabels[k]}(${files.map(f=>f.name).join('; ')})` : docLabels[k];
+    }).join(', ');
     const note = vendorName ? (state.reconNotes[vendorName] || '') : '';
     const no = vendorName ? (++tripleRowNo) : '';
     const r = push([no, vendorName, invSum, quoteSum, trSum, status, docsText, note]);
@@ -1283,6 +1486,32 @@ function exportExcel(){
   };
   allVendors.forEach(v => addTripleReconRow(v));
   for (let i=0;i<BUFFER;i++) addTripleReconRow(''); // 새 거래처명을 직접 적으면 자동으로 계산되는 여분 줄
+  push([]);
+
+  push(['6. 자동 점검 (공급시기·자료누락·금액차이)']);
+  push(['거래처','등급','확인할 점']);
+  const auditRows = auditVendorList().map(v => ({ v, issues: auditVendor(v) }));
+  auditRows.sort((a,b) => {
+    const rank = x => x.issues.some(i=>i.level==='warn') ? 0 : (x.issues.length ? 1 : 2);
+    return rank(a) - rank(b);
+  });
+  if (auditRows.length === 0){
+    push(['','','입력된 거래처 자료가 없습니다']);
+  } else {
+    auditRows.forEach(({v, issues}) => {
+      const grade = auditGrade(issues).label.replace(/[⚠✓]\s*/g,'');
+      if (issues.length === 0){
+        push([v, grade, '입력된 자료 기준으로 특이사항 없음']);
+      } else {
+        const sorted = issues.slice().sort((a,b) => (a.level==='warn'?0:1) - (b.level==='warn'?0:1));
+        sorted.forEach((iss, idx) => {
+          push([idx === 0 ? v : '', idx === 0 ? grade : '', `${iss.level === 'warn' ? '[확인필요] ' : '[참고] '}${iss.text}`]);
+        });
+      }
+    });
+  }
+  push([]);
+  push(['', '', '※ 자동 점검은 입력된 날짜·금액만 본 추정입니다. 반드시 원본 서류로 확인하고, 공급시기 판단은 담당 세무사 검토를 거쳐주세요.']);
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -1290,7 +1519,8 @@ function exportExcel(){
     const addr = XLSX.utils.encode_cell({ r, c });
     ws[addr] = { t: t || 'n', f, v: v === undefined ? 0 : v };
   });
-  ws['!cols'] = [{wch:22},{wch:24},{wch:16},{wch:18},{wch:40},{wch:14},{wch:12},{wch:8},{wch:14},{wch:16}];
+  // C열은 "6. 자동 점검"의 확인할 점(긴 문장)이 들어가므로 넉넉하게
+  ws['!cols'] = [{wch:22},{wch:24},{wch:38},{wch:18},{wch:40},{wch:14},{wch:12},{wch:8},{wch:14},{wch:16}];
   XLSX.utils.book_append_sheet(wb, ws, '조기환급체크');
   const filename = `조기환급체크_${sanitizeKey(state.meta.clientName||'거래처')}_${sanitizeKey(periodLabel())}.xlsx`;
   XLSX.writeFile(wb, filename);
