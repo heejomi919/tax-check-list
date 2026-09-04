@@ -54,11 +54,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
   .masthead h1 .hl-navy { color: var(--navy); }
   .masthead h1 .hl-brass { color: var(--brass); }
+  /* 한국어 본문은 word-break:keep-all 이 없으면 어절 중간에서 끊깁니다.
+     text-wrap:balance 는 두 줄 길이를 비슷하게 맞춰줍니다. */
   .masthead .sub {
-    font-size:13px; color:#6b6355; margin:11px 0 0; max-width:36em;
-    line-height:1.65; text-wrap:balance;
+    font-size:13.5px; color:#6b6355; margin:12px 0 0; max-width:34em;
+    line-height:1.75; text-wrap:balance; word-break:keep-all;
   }
   .masthead .sub strong { color:var(--navy); font-weight:700; }
+  /* 도구의 성격(내부용)은 설명과 역할이 달라 테두리로 분리 */
+  .sub-note {
+    margin-top:13px; padding:5px 13px;
+    border:1px solid var(--line); border-radius:4px; background:rgba(255,255,255,0.5);
+    font-size:11px; font-weight:600; color:#8a8272; letter-spacing:.02em;
+    word-break:keep-all;
+  }
   .section-divider {
     display:flex; align-items:center; gap:12px; color:#c9b899;
     font-size:11px; letter-spacing:.08em; margin:18px 0 22px;
@@ -139,7 +148,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .hint { font-size:11.5px; color:#8a8272; margin-bottom:8px; }
   .pastearea { width:100%; border:1px solid var(--line); border-radius:6px; padding:10px 12px; font-family:var(--mono); font-size:12px; background:#fffdf9; resize:vertical; }
   .pastearea:focus { outline:2px solid var(--navy-2); outline-offset:1px; }
-  @media (max-width:720px){ .meta-grid{grid-template-columns:1fr;} .map-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:720px){
+    .meta-grid{grid-template-columns:1fr;} .map-grid{grid-template-columns:1fr 1fr;}
+    .masthead .sub br { display:none; }   /* 좁은 화면에서는 자연스러운 줄바꿈에 맡김 */
+  }
 
 
   /* 발행 주체 - 자간을 넓힌 작은 라벨. text-indent 는 마지막 글자 뒤에 남는
@@ -209,7 +221,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="masthead-icon">🧾</div>
     <div class="masthead-firm">대한세무법인</div>
     <h1><span class="hl-navy">조기환급시</span> <span class="hl-brass">체크리스트</span></h1>
-    <p class="sub">부가세 <strong>조기환급 신고 전</strong>, 거래처별로 세금계산서·견적서·송금을 대조해 확인할 때 사용하세요.</p>
+    <p class="sub">부가세 <strong>조기환급 신고 전</strong>,<br>거래처별로 세금계산서·견적서·송금을 대조해 확인할 때 사용하세요.</p>
+    <div class="sub-note">국세청 제출용이 아닙니다 · 사무실 내부 검토용</div>
   </div>
   <!-- 사용법: 이 파일만 받은 직원도 바로 쓸 수 있게 접어서 넣어둠 -->
   <div class="card collapsed" id="guideCard">
