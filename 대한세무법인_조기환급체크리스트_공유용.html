@@ -155,6 +155,25 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dossier-sign > div { flex:1; display:flex; align-items:flex-end; gap:6px; }
   .dossier-sign .sign-line { flex:1; border-bottom:1px solid var(--line); height:20px; }
 
+  /* ── 첨부 판독 화면: 원본을 크게 보면서 바로 입력 ── */
+  .modal { position:fixed; inset:0; background:rgba(28,46,74,0.55); z-index:100; display:none; padding:24px; }
+  .modal.open { display:flex; align-items:center; justify-content:center; }
+  .modal-box { background:var(--paper); border-radius:8px; width:100%; max-width:1100px; max-height:100%; display:flex; flex-direction:column; box-shadow:0 8px 32px rgba(28,46,74,0.3); }
+  .modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line); }
+  .modal-title { font-family:var(--serif); font-size:16px; font-weight:800; color:var(--navy); }
+  .modal-body { display:grid; grid-template-columns: 1.4fr 1fr; gap:0; overflow:hidden; flex:1; min-height:0; }
+  .modal-preview { background:#2b2b2b; overflow:auto; display:flex; align-items:flex-start; justify-content:center; padding:12px; min-height:320px; }
+  .modal-preview img { max-width:100%; height:auto; cursor:zoom-in; background:#fff; }
+  .modal-preview img.zoomed { max-width:none; width:200%; cursor:zoom-out; }
+  .modal-preview embed, .modal-preview iframe { width:100%; height:70vh; border:0; background:#fff; }
+  .modal-form { padding:16px 18px; overflow:auto; display:flex; flex-direction:column; gap:12px; }
+  .modal-form .field label { display:block; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8a8272; font-weight:700; margin-bottom:4px; }
+  .modal-form .field input { width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:4px; font-size:14px; font-family:var(--sans); background:#fff; }
+  .modal-form .field input.amount-in { font-family:var(--mono); text-align:right; font-variant-numeric:tabular-nums; }
+  .modal-foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:12px 18px; border-top:1px solid var(--line); }
+  .modal-count { font-size:12px; color:#8a8272; margin-right:auto; }
+  @media (max-width:860px){ .modal-body { grid-template-columns:1fr; } .modal-preview { min-height:200px; } }
+
   /* ── 인쇄: 검토조서만 거래처별로 한 장씩 ── */
   @media print {
     body { background:#fff; }
@@ -428,6 +447,26 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <button class="btn secondary small" onclick="window.print()">🖨 조서만 인쇄 (거래처별 1장)</button>
     </div>
     <div id="dossierBody"></div>
+  </div>
+
+  <!-- 첨부 판독 화면: 원본을 크게 보면서 금액·날짜를 바로 입력 -->
+  <div class="modal" id="readModal" onclick="if(event.target===this) closeReadPanel()">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title" id="readModalTitle">첨부 판독</div>
+        <button class="btn ghost" onclick="closeReadPanel()" title="닫기 (Esc)">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-preview" id="readModalPreview"></div>
+        <div class="modal-form" id="readModalForm"></div>
+      </div>
+      <div class="modal-foot">
+        <span class="modal-count" id="readModalCount"></span>
+        <button class="btn secondary small" onclick="stepReadPanel(-1)">◀ 이전 첨부</button>
+        <button class="btn secondary small" onclick="stepReadPanel(1)">다음 첨부 ▶</button>
+        <button class="btn small" onclick="closeReadPanel()">입력 완료</button>
+      </div>
+    </div>
   </div>
 
 
@@ -716,7 +755,8 @@ function renderTable(section){
 
   const attachCell = (r) => `<td>${
     r.attachmentUrl
-      ? `<a href="${r.attachmentUrl}" target="_blank" title="${escapeHtml(r.attachmentName||'')}">📎 보기</a>`
+      ? `<button class="btn secondary small" onclick="openReadPanel('${section}','${r.id}')" title="${escapeHtml(r.attachmentName||'')}">📎 판독</button>
+         <a href="${r.attachmentUrl}" target="_blank" title="새 창으로 열기" style="margin-left:4px; color:#8a8272; text-decoration:none">↗</a>`
       : ''
   }</td>`;
   const hasAttachCol = (section === 'transfers' || section === 'quotations');
@@ -759,21 +799,129 @@ function parseFilenameHint(name){
 
 function handleAttachments(evt, section){
   const files = Array.from(evt.target.files || []);
+  const added = [];
   files.forEach(file => {
     const url = URL.createObjectURL(file);
     const hint = parseFilenameHint(file.name);
+    const id = uid();
+    added.push(id);
     state[section].push({
-      id: uid(), vendor: hint.vendor, date: hint.date, amount: null,
+      id, vendor: hint.vendor, date: hint.date, amount: null,
       note: file.name, attachmentUrl: url, attachmentName: file.name
     });
   });
   renderTable(section);
   evt.target.value = '';
-  if (files.length > 0){
-    const amountLabel = section === 'quotations' ? '견적금액' : '송금액';
-    alert(`${files.length}건 첨부했어요. 파일명에서 날짜·거래처를 추측해서 채워뒀는데, 추측이라 틀릴 수 있어요 — "📎 보기"로 열어서 맞는지 확인하고 ${amountLabel}을 입력해주세요.`);
-  }
+  // 올린 즉시 판독 화면을 띄워서, 원본을 보면서 바로 입력할 수 있게 함
+  if (added.length > 0) openReadPanel(section, added[0]);
 }
+
+/* ------------------------------------------------------------------ */
+/* 첨부 판독 화면 (원본을 크게 보면서 금액·날짜 입력)                          */
+/* ------------------------------------------------------------------ */
+let readPanel = { section: null, id: null };
+
+function attachedRows(section){
+  return state[section].filter(r => r.attachmentUrl);
+}
+
+function openReadPanel(section, id){
+  const row = state[section].find(r => r.id === id);
+  if (!row || !row.attachmentUrl) return;
+  readPanel = { section, id };
+  renderReadPanel();
+  document.getElementById('readModal').classList.add('open');
+}
+
+function closeReadPanel(){
+  document.getElementById('readModal').classList.remove('open');
+  document.getElementById('readModalPreview').innerHTML = ''; // 미리보기 해제
+  readPanel = { section: null, id: null };
+}
+
+/* 첨부된 행들 사이를 앞뒤로 이동 (여러 장 연속 판독) */
+function stepReadPanel(delta){
+  const { section, id } = readPanel;
+  if (!section) return;
+  const rows = attachedRows(section);
+  const idx = rows.findIndex(r => r.id === id);
+  if (idx === -1) return;
+  const next = rows[idx + delta];
+  if (!next) return;
+  readPanel.id = next.id;
+  renderReadPanel();
+}
+
+function renderReadPanel(){
+  const { section, id } = readPanel;
+  const row = state[section].find(r => r.id === id);
+  if (!row) return;
+  const isQuote = section === 'quotations';
+  const rows = attachedRows(section);
+  const idx = rows.findIndex(r => r.id === id);
+
+  document.getElementById('readModalTitle').textContent =
+    (isQuote ? '견적서 판독' : '이체확인증 판독') + ' — ' + (row.attachmentName || '');
+  document.getElementById('readModalCount').textContent =
+    `첨부 ${idx + 1} / ${rows.length}`;
+
+  const isPdf = /\.pdf$/i.test(row.attachmentName || '');
+  document.getElementById('readModalPreview').innerHTML = isPdf
+    ? `<embed src="${row.attachmentUrl}" type="application/pdf">`
+    : `<img src="${row.attachmentUrl}" alt="${escapeHtml(row.attachmentName||'')}" onclick="this.classList.toggle('zoomed')" title="클릭하면 확대/축소">`;
+
+  const amountLabel = isQuote ? '견적금액 (공급가액+세액)' : '송금액';
+
+  /* 세금계산서(취득명세서)에 있는 상호를 버튼으로 제시 - 한 번 눌러 정확히 맞춤 */
+  const invVendors = Array.from(new Set(state.invoices.map(r => resolveVendor(r.vendor)).filter(Boolean)));
+  const vendorPicks = invVendors.length
+    ? `<div class="field">
+         <label>세금계산서 상호에서 고르기</label>
+         <div class="row-gap" style="gap:6px">
+           ${invVendors.map(v => `<button class="btn secondary small" onclick="pickReadVendor('${jsAttr(v)}')">${escapeHtml(v)}</button>`).join('')}
+         </div>
+       </div>`
+    : '';
+
+  document.getElementById('readModalForm').innerHTML = `
+    <div class="hint" style="margin:0">원본을 보면서 아래 세 칸만 채우면 표와 검토조서에 바로 반영됩니다. 사진은 클릭하면 확대됩니다.</div>
+    ${vendorPicks}
+    <div class="field">
+      <label>${isQuote ? '공급자 (거래처)' : '수취자 (거래처)'}</label>
+      <input id="readVendor" value="${escapeHtml(row.vendor||'')}" placeholder="세금계산서와 같은 상호로">
+    </div>
+    <div class="field">
+      <label>${isQuote ? '작성일자' : '송금일'}</label>
+      <input id="readDate" value="${escapeHtml(row.date||'')}" placeholder="2026-06-23">
+    </div>
+    <div class="field">
+      <label>${amountLabel}</label>
+      <input id="readAmount" class="amount-in" value="${numStr(row.amount)}" placeholder="0">
+    </div>
+    <div class="hint" style="margin:0">거래처명은 <strong>세금계산서(취득명세서)와 똑같이</strong> 적어주세요. 통장에 대표자 개인명이 찍혀 있어도 상호로 통일해야 대사표에서 묶입니다.</div>
+  `;
+
+  const vendorEl = document.getElementById('readVendor');
+  const dateEl = document.getElementById('readDate');
+  const amountEl = document.getElementById('readAmount');
+  vendorEl.oninput = () => onFieldChange(section, id, 'vendor', vendorEl.value);
+  dateEl.oninput   = () => onFieldChange(section, id, 'date', dateEl.value);
+  amountEl.oninput = () => onAmountChange(section, id, amountEl.value);
+  vendorEl.focus();
+}
+
+/* 세금계산서 상호 버튼을 누르면 거래처명을 그대로 맞춰줌 (이름 불일치 방지) */
+function pickReadVendor(vendor){
+  const { section, id } = readPanel;
+  if (!section) return;
+  onFieldChange(section, id, 'vendor', vendor);
+  const el = document.getElementById('readVendor');
+  if (el) el.value = vendor;
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && readPanel.section) closeReadPanel();
+});
 
 function renderTripleRecon(bodyId){
   const body = document.getElementById(bodyId);
@@ -1175,7 +1323,8 @@ function onFieldChange(section,id,field,value){
   const row = state[section].find(r=>r.id===id);
   if (!row) return;
   row[field] = value;
-  if (field==='vendor') updateDerived();
+  // 거래처명과 일자는 대사표·자동점검·검토조서의 계산 근거라 바뀌면 다시 그림
+  if (field==='vendor' || field==='date') updateDerived();
 }
 function onAmountChange(section,id,value){
   const row = state[section].find(r=>r.id===id);
