@@ -54,7 +54,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
   .masthead h1 .hl-navy { color: var(--navy); }
   .masthead h1 .hl-brass { color: var(--brass); }
-  .masthead .sub { font-size:13px; color:#8a8272; margin-top:8px; }
+  .masthead .sub {
+    font-size:13px; color:#6b6355; margin:11px 0 0; max-width:36em;
+    line-height:1.65; text-wrap:balance;
+  }
+  .masthead .sub strong { color:var(--navy); font-weight:700; }
   .section-divider {
     display:flex; align-items:center; gap:12px; color:#c9b899;
     font-size:11px; letter-spacing:.08em; margin:18px 0 22px;
@@ -205,6 +209,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="masthead-icon">🧾</div>
     <div class="masthead-firm">대한세무법인</div>
     <h1><span class="hl-navy">조기환급시</span> <span class="hl-brass">체크리스트</span></h1>
+    <p class="sub">부가세 <strong>조기환급 신고 전</strong>, 거래처별로 세금계산서·견적서·송금을 대조해 확인할 때 사용하세요.</p>
   </div>
   <!-- 사용법: 이 파일만 받은 직원도 바로 쓸 수 있게 접어서 넣어둠 -->
   <div class="card collapsed" id="guideCard">
