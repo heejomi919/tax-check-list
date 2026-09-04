@@ -54,7 +54,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
   .masthead h1 .hl-navy { color: var(--navy); }
   .masthead h1 .hl-brass { color: var(--brass); }
-  .masthead .sub { font-size:13px; color:#8a8272; margin-top:8px; }
+  /* 한국어 본문은 word-break:keep-all 이 없으면 어절 중간에서 끊깁니다.
+     text-wrap:balance 는 두 줄 길이를 비슷하게 맞춰줍니다. */
+  .masthead .sub {
+    font-size:13.5px; color:#6b6355; margin:12px 0 0; max-width:34em;
+    line-height:1.75; text-wrap:balance; word-break:keep-all;
+  }
+  .masthead .sub strong { color:var(--navy); font-weight:700; }
+  /* 도구의 성격(내부용)은 설명과 역할이 달라 테두리로 분리 */
+  .sub-note {
+    margin-top:13px; padding:5px 13px;
+    border:1px solid var(--line); border-radius:4px; background:rgba(255,255,255,0.5);
+    font-size:11px; font-weight:600; color:#8a8272; letter-spacing:.02em;
+    word-break:keep-all;
+  }
   .section-divider {
     display:flex; align-items:center; gap:12px; color:#c9b899;
     font-size:11px; letter-spacing:.08em; margin:18px 0 22px;
@@ -64,11 +77,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:18px 20px; margin-bottom:18px; box-shadow:0 1px 2px rgba(28,46,74,0.04); }
   .card h2 { font-family: var(--serif); font-size:19px; font-weight:800; margin:0 0 14px; color:var(--navy); letter-spacing:-0.01em; display:flex; align-items:center; gap:8px; }
+  /* 번호는 채운 배지 대신 세리프 숫자 + 가는 세로선으로 둡니다.
+     배지가 6번 반복되면 제목보다 배지가 먼저 읽혀 위계가 뭉개집니다. */
   .card h2 .num {
-    display:inline-flex; align-items:center; justify-content:center;
-    min-width:26px; height:26px; padding:0 6px; border-radius:7px;
-    background: var(--brass); color:#fff; font-size:14px; font-weight:800;
-    font-family: var(--sans);
+    font-family: var(--serif); font-size:16px; font-weight:700;
+    color: var(--brass); font-variant-numeric: tabular-nums;
+    min-width:0.9em; text-align:right; line-height:1.5;
+    padding-right:11px; border-right:1px solid var(--line);
   }
   .eyebrow { font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--brass); font-weight:700; margin-bottom:6px; }
   .meta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
@@ -98,9 +113,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .badge.ok { background:var(--ok-bg); color:var(--ok); }
   .badge.warn { background:var(--warn-bg); color:var(--warn); }
   .badge.pending { background:#efece3; color:#8a8272; }
-  .doc-check-group { display:flex; flex-direction:column; gap:2px; font-size:11.5px; color:var(--ink); white-space:nowrap; }
-  .doc-check-group label { display:flex; align-items:center; gap:4px; cursor:pointer; }
+  .doc-check-group { display:flex; flex-direction:column; gap:3px; font-size:11.5px; color:var(--ink); white-space:nowrap; }
+  .doc-check-item { display:flex; align-items:center; gap:4px; }
+  .doc-check-item label { display:flex; align-items:center; gap:4px; cursor:pointer; }
   .doc-check-group input[type="checkbox"] { margin:0; }
+  .audit-list { margin:0; padding-left:16px; font-size:12px; line-height:1.6; }
+  .audit-list li.warn { color:var(--warn); }
+  .audit-list li.info { color:#6b6455; }
+  .recon-doc-files { display:inline-flex; gap:2px; }
+  .recon-doc-files a { text-decoration:none; }
+  .doc-attach-btn { border:none; background:transparent; color:#8a8272; cursor:pointer; font-size:12px; padding:0 2px; line-height:1; }
+  .doc-attach-btn:hover { color:var(--navy-2); }
   .savedlist { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
   .chip { display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:20px; padding:4px 6px 4px 12px; font-size:12.5px; background:#fffdf9; cursor:pointer; }
   .chip button { border:none; background:transparent; cursor:pointer; color:#8a8272; }
@@ -125,7 +148,68 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .hint { font-size:11.5px; color:#8a8272; margin-bottom:8px; }
   .pastearea { width:100%; border:1px solid var(--line); border-radius:6px; padding:10px 12px; font-family:var(--mono); font-size:12px; background:#fffdf9; resize:vertical; }
   .pastearea:focus { outline:2px solid var(--navy-2); outline-offset:1px; }
-  @media (max-width:720px){ .meta-grid{grid-template-columns:1fr;} .map-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:720px){
+    .meta-grid{grid-template-columns:1fr;} .map-grid{grid-template-columns:1fr 1fr;}
+    .masthead .sub br { display:none; }   /* 좁은 화면에서는 자연스러운 줄바꿈에 맡김 */
+  }
+
+
+  /* 발행 주체 - 자간을 넓힌 작은 라벨. text-indent 는 마지막 글자 뒤에 남는
+     자간 여백만큼 되밀어 글자가 가운데에 오도록 보정합니다. */
+  .masthead-firm {
+    font-size:11px; font-weight:700; color:var(--brass);
+    letter-spacing:.34em; text-indent:.34em; margin-bottom:9px;
+  }
+
+  /* ── 사용법 안내 ── */
+  .guide { font-size:12.5px; line-height:1.65; color:var(--ink); }
+  .guide h3 { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); margin:18px 0 8px; }
+  .guide ul { margin:0; padding-left:17px; }
+  .guide li { margin-bottom:5px; }
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .step { background:#fffdf9; border:1px solid var(--line); border-radius:6px; padding:12px 14px; }
+  .step-head { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+  .step-n { font-family:var(--serif); font-size:15px; font-weight:700; color:var(--brass);
+            font-variant-numeric: tabular-nums; line-height:1.5;
+            padding-right:9px; border-right:1px solid var(--line); }
+  .step-t { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); }
+  .step ul { padding-left:15px; }
+  .guide-first { margin-top:12px; padding:9px 12px; background:var(--paper-2); border-radius:4px; font-size:12.5px; }
+  .guide code { font-family:var(--mono); font-size:11.5px; background:var(--paper-2); padding:1px 4px; border-radius:3px; }
+  .guide-warn { }
+  .guide-warn li strong { color:var(--navy); }
+  @media (max-width:760px){ .steps { grid-template-columns:1fr; } }
+
+  /* ── 첨부 판독 화면: 원본을 크게 보면서 바로 입력 ── */
+  .modal { position:fixed; inset:0; background:rgba(28,46,74,0.55); z-index:100; display:none; padding:24px; }
+  .modal.open { display:flex; align-items:center; justify-content:center; }
+  .modal-box { background:var(--paper); border-radius:8px; width:100%; max-width:1100px; max-height:100%; display:flex; flex-direction:column; box-shadow:0 8px 32px rgba(28,46,74,0.3); }
+  .modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line); }
+  .modal-title { font-family:var(--serif); font-size:16px; font-weight:800; color:var(--navy); }
+  .modal-body { display:grid; grid-template-columns: 1.4fr 1fr; gap:0; overflow:hidden; flex:1; min-height:0; }
+  .modal-preview { background:#2b2b2b; overflow:auto; display:flex; align-items:flex-start; justify-content:center; padding:12px; min-height:320px; }
+  .modal-preview img { max-width:100%; height:auto; cursor:zoom-in; background:#fff; }
+  .modal-preview img.zoomed { max-width:none; width:200%; cursor:zoom-out; }
+  .modal-preview embed, .modal-preview iframe { width:100%; height:70vh; border:0; background:#fff; }
+  .modal-form { padding:16px 18px; overflow:auto; display:flex; flex-direction:column; gap:12px; }
+  .modal-form .field label { display:block; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8a8272; font-weight:700; margin-bottom:4px; }
+  .modal-form .field input { width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:4px; font-size:14px; font-family:var(--sans); background:#fff; }
+  .modal-form .field input.amount-in { font-family:var(--mono); text-align:right; font-variant-numeric:tabular-nums; }
+  .modal-foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:12px 18px; border-top:1px solid var(--line); }
+  .modal-count { font-size:12px; color:#8a8272; margin-right:auto; }
+  @media (max-width:860px){ .modal-body { grid-template-columns:1fr; } .modal-preview { min-height:200px; } }
+
+  /* ── 사진에서 숫자 읽기(OCR) 결과 ── */
+  .ocr-status { font-size:12px; color:#8a8272; padding:8px 10px; background:var(--paper-2); border-radius:4px; line-height:1.6; }
+  .ocr-hit { font-size:12px; color:var(--ok); background:var(--ok-bg); padding:7px 10px; border-radius:4px; margin-bottom:8px; }
+  .ocr-group { margin-bottom:10px; }
+  .ocr-label { font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:#8a8272; font-weight:700; margin-bottom:5px; }
+  .ocr-hint { text-transform:none; letter-spacing:0; font-weight:400; }
+  .ocr-chips { display:flex; flex-wrap:wrap; gap:5px; }
+  .ocr-chips .btn { font-family:var(--mono); }
+  .ocr-none { font-size:12px; color:#8a8272; }
+  .ocr-warn { font-size:11.5px; color:#7a3a20; background:var(--warn-bg); border-left:3px solid var(--warn); padding:7px 10px; border-radius:3px; line-height:1.55; }
+
 </style>
 </head>
 <body>
@@ -133,8 +217,55 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div class="masthead">
     <div class="masthead-icon">🧾</div>
+    <div class="masthead-firm">대한세무법인</div>
     <h1><span class="hl-navy">조기환급시</span> <span class="hl-brass">체크리스트</span></h1>
+    <p class="sub">부가세 <strong>조기환급 신고 전</strong>,<br>거래처별로 세금계산서·견적서·송금을 대조해 확인할 때 사용하세요.</p>
+    <div class="sub-note">국세청 제출용이 아닙니다 · 사무실 내부 검토용</div>
   </div>
+  <!-- 사용법: 이 파일만 받은 직원도 바로 쓸 수 있게 접어서 넣어둠 -->
+  <div class="card collapsed" id="guideCard">
+    <h2 class="card-toggle" onclick="toggleCard(this)"><span class="chev">▸</span> 📖 처음 쓰시는 분 — 사용법 (눌러서 펼치기)</h2>
+    <div class="card-body">
+      <div class="guide">
+        <div class="steps">
+          <div class="step">
+            <div class="step-head"><span class="step-n">1</span><span class="step-t">자료 올리기</span></div>
+            <ul>
+              <li><strong>취득명세서 엑셀</strong> → 2번 (위하고에서 엑셀로 변환해 받은 것)</li>
+              <li><strong>견적서·이체확인증 사진</strong> → 3·4번 (올리면 판독창이 열립니다)</li>
+              <li>판독창의 <strong>🔍 사진에서 숫자 읽기</strong>로 금액·날짜 후보를 뽑을 수 있습니다</li>
+              <li>파일명을 <code>견적서_6.23_혜성</code>처럼 두면 날짜·거래처가 미리 채워집니다</li>
+            </ul>
+          </div>
+          <div class="step">
+            <div class="step-head"><span class="step-n">2</span><span class="step-t">확인하기</span></div>
+            <ul>
+              <li><strong>5번 대사표</strong> — 금액 자동 비교, ＋로 서류 첨부</li>
+              <li><strong>6번 자동 점검</strong> — 공급시기·누락·차액 확인할 점</li>
+            </ul>
+          </div>
+          <div class="step">
+            <div class="step-head"><span class="step-n">3</span><span class="step-t">넘기기</span></div>
+            <ul>
+              <li><strong>⬇ 엑셀로 다운로드</strong>로 결과 보관 (원본 사진은 따로 폴더에)</li>
+              <li>확인필요 건은 원본 대조 후 세무사님께 전달</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="guide-first">시작 전에 <strong>연도</strong>와 <strong>조기환급 대상월</strong>을 먼저 넣어주세요. 이게 없으면 날짜 점검이 돌지 않습니다.</div>
+
+        <h3>꼭 알아두기</h3>
+        <ul class="guide-warn">
+          <li><strong>거래처명은 세금계산서 상호로 통일</strong> — 통장에 찍힌 대표자 개인명으로 넣으면 다른 거래처로 잡힙니다. 판독창의 상호 버튼을 쓰면 실수가 없습니다.</li>
+          <li><strong>📎 첨부는 창을 닫으면 끊깁니다</strong> — 끝나면 엑셀로 내려받아 기록을 남기고 원본은 폴더에 보관하세요.</li>
+          <li><strong>저장은 내 브라우저에만 남습니다</strong> — 남에게 줄 자료는 엑셀로 내려받으세요.</li>
+          <li><strong>자동 점검·자동 인식은 추정입니다</strong> — 정상인데도 "확인필요"가 뜰 수 있습니다. 반드시 원본과 대조하세요.</li>
+        </ul>
+</div>
+    </div>
+  </div>
+
   <div class="section-divider"><span>✦ 거래처 정보부터 입력해주세요 ✦</span></div>
 
   <!-- 거래처 정보 -->
@@ -172,9 +303,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="field"><label>조사관 연락처</label><input id="metaOfficerPhone"></div>
     </div>
 
-    <div class="hint" style="margin-top:4px">관할세무서를 모르면, 주소나 동네 이름으로 검색해보세요 (예: 분당구, 야탑동, 중원구).</div>
+    <div class="hint" style="margin-top:4px">관할세무서는 위 칸에 직접 적어도 되고, 아래에서 <strong>동네·세무서 이름으로 찾아 눌러 넣어도</strong> 됩니다 (예: 야탑동, 성남).</div>
     <div class="map-grid" style="grid-template-columns: 2fr auto; margin-bottom:0;">
-      <div class="field"><input id="taxOfficeSearch" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchTaxOffice();}"></div>
+      <div class="field"><input id="taxOfficeSearch" placeholder="동네 또는 세무서 이름" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchTaxOffice();}"></div>
       <div class="field" style="display:flex; align-items:flex-end;"><button class="btn secondary small" onclick="searchTaxOffice()">검색</button></div>
     </div>
     <div id="taxOfficeResults" class="hint"></div>
@@ -247,9 +378,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </table></div>
   </div>
 
-  <!-- 견적서 현황 -->
+  <!-- 견적서 내역 -->
   <div class="card">
-    <h2><span class="num">3</span> 견적서 현황</h2>
+    <h2><span class="num">3</span> 견적서 내역</h2>
     <div class="subsection-toggle" onclick="toggleSubsection(this)"><span class="chev">▸</span> 자료 불러오기</div>
     <div class="subsection">
     <div class="hint">받은 견적서를 정리한 표(xlsx, csv)가 있으면 그대로 올려서 채울 수 있어요.</div>
@@ -275,7 +406,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="hint">아래에서 어떤 열이 거래처명 / 날짜 / 금액인지 확인하고 맞게 지정해주세요. (자동으로 추정해서 미리 선택해뒀습니다)</div>
       <div class="map-grid">
         <div class="field"><label>거래처명 열</label><select id="quotationsMapVendor"></select></div>
-        <div class="field"><label>작성일자 열</label><select id="quotationsMapDate"></select></div>
+        <div class="field"><label>견적일 열</label><select id="quotationsMapDate"></select></div>
         <div class="field"><label>금액 열</label><select id="quotationsMapAmount"></select></div>
         <div class="field"><label>세액 열 (선택, 금액과 합산)</label><select id="quotationsMapTax"><option value="-1">사용 안 함</option></select></div>
       </div>
@@ -295,7 +426,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <div class="table-wrap"><table style="margin-top:14px">
-      <thead><tr><th>공급자</th><th>작성일자</th><th style="text-align:right">견적금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
+      <thead><tr><th>거래처</th><th>견적일</th><th style="text-align:right">견적금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
       <tbody id="quotationBody"></tbody>
       <tfoot><tr class="totalrow"><td colspan="2">합계</td><td class="amount" id="quotationTotal">0원</td><td colspan="3"></td></tr></tfoot>
     </table></div>
@@ -339,7 +470,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <div class="table-wrap"><table style="margin-top:14px">
-      <thead><tr><th>수취자</th><th>송금일</th><th style="text-align:right">송금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
+      <thead><tr><th>거래처</th><th>송금일</th><th style="text-align:right">송금액</th><th>비고</th><th>첨부</th><th></th></tr></thead>
       <tbody id="transferBody"></tbody>
       <tfoot><tr class="totalrow"><td colspan="2">합계</td><td class="amount" id="transferTotal">0원</td><td colspan="3"></td></tr></tfoot>
     </table></div>
@@ -349,7 +480,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <!-- 대사표: 3방향 크로스체크 -->
   <div class="card">
     <h2><span class="num">5</span> 건물등감가상각취득명세서·견적서·송금 대사표</h2>
-    <div class="hint">거래처별로 세금계산서 합계·견적서 합계·송금 합계를 한 번에 비교해요. 셋 다 같으면 "일치", 하나라도 다르면 "확인필요"로 표시돼요. 계약금·잔금처럼 나눠 보낸 경우엔 확인필요가 떠도 정상일 수 있어요.</div>
+    <div class="hint">거래처별로 세금계산서 합계·견적서 합계·송금 합계를 한 번에 비교해요. 셋 다 같으면 "일치", 하나라도 다르면 "확인필요"로 표시돼요. 계약금·잔금처럼 나눠 보낸 경우엔 확인필요가 떠도 정상일 수 있어요. 첨부서류 칸의 "+"를 누르면 계약서·견적서·입금증 파일(사진/PDF)을 거래처별로 바로 첨부할 수 있어요.</div>
+    <input type="file" id="reconDocFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.webp" style="display:none" onchange="handleReconDocFileInput(event)">
     <div class="table-wrap"><table style="min-width:760px">
       <thead><tr>
         <th>No</th>
@@ -365,6 +497,39 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </table></div>
   </div>
 
+  <!-- 자동 점검: 공급시기·자료누락·금액차이 -->
+  <div class="card">
+    <h2><span class="num">6</span> 자동 점검 <span style="font-weight:400; font-size:13px; color:#8a8272">(공급시기·자료누락·금액차이)</span></h2>
+    <div class="hint">입력된 <strong>날짜와 금액</strong>만 보고 거래처별로 확인할 점을 자동으로 찾아줘요. 날짜를 비워둔 자료는 날짜 점검에서 빠지고, <strong>추정이라 오탐이 있을 수 있으니</strong> 반드시 원본 서류로 확인해주세요.</div>
+    <div class="table-wrap"><table style="min-width:720px">
+      <thead><tr>
+        <th style="width:170px">거래처</th>
+        <th>확인할 점</th>
+      </tr></thead>
+      <tbody id="auditBody"></tbody>
+    </table></div>
+  </div>
+
+  <!-- 첨부 판독 화면: 원본을 크게 보면서 금액·날짜를 바로 입력 -->
+  <div class="modal" id="readModal" onclick="if(event.target===this) closeReadPanel()">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title" id="readModalTitle">첨부 판독</div>
+        <button class="btn ghost" onclick="closeReadPanel()" title="닫기 (Esc)">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-preview" id="readModalPreview"></div>
+        <div class="modal-form" id="readModalForm"></div>
+      </div>
+      <div class="modal-foot">
+        <span class="modal-count" id="readModalCount"></span>
+        <button class="btn secondary small" onclick="stepReadPanel(-1)">◀ 이전 첨부</button>
+        <button class="btn secondary small" onclick="stepReadPanel(1)">다음 첨부 ▶</button>
+        <button class="btn small" onclick="closeReadPanel()">입력 완료</button>
+      </div>
+    </div>
+  </div>
+
 
 
 <script>
@@ -378,7 +543,8 @@ let state = {
   transfers: [],
   sales: { items: [], reported: null, note: '' },
   reconNotes: {}, // { [거래처명]: '비고 텍스트' }
-  reconDocs: {} // { [거래처명]: { contract:bool, quote:bool, deposit:bool } }
+  reconDocs: {}, // { [거래처명]: { contract:bool, quote:bool, deposit:bool } }
+  reconAttachments: {} // { [거래처명]: { contract:[{url,name}], quote:[...], deposit:[...] } }
 };
 let pendingImport = null; // { section, headers, rows(2D, 데이터행부터) }
 
@@ -562,6 +728,10 @@ function won(n){ if(n===null||n===undefined||isNaN(n)) return '0원'; return new
 function numStr(n){ if(n===null||n===undefined||n===''||isNaN(n)) return ''; return new Intl.NumberFormat('ko-KR').format(Math.round(Number(n))); }
 function escapeHtml(s){ return (s===undefined||s===null)?'':String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function sanitizeKey(s){ return (s||'').trim().replace(/[\s/\\'"]+/g,'_').slice(0,60) || 'unnamed'; }
+/* onclick="fn('...')" 처럼 HTML 속성 안의 JS 문자열로 넘길 값 (거래처명에 ' " < > 가 있어도 안전) */
+function jsAttr(s){
+  return escapeHtml(String(s===undefined||s===null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"));
+}
 function parseAmountLoose(v){
   if (v===undefined||v===null||v==='') return null;
   if (typeof v === 'number') return v;
@@ -644,7 +814,8 @@ function renderTable(section){
 
   const attachCell = (r) => `<td>${
     r.attachmentUrl
-      ? `<a href="${r.attachmentUrl}" target="_blank" title="${escapeHtml(r.attachmentName||'')}">📎 보기</a>`
+      ? `<button class="btn secondary small" onclick="openReadPanel('${section}','${r.id}')" title="${escapeHtml(r.attachmentName||'')}">📎 판독</button>
+         <a href="${r.attachmentUrl}" target="_blank" title="새 창으로 열기" style="margin-left:4px; color:#8a8272; text-decoration:none">↗</a>`
       : ''
   }</td>`;
   const hasAttachCol = (section === 'transfers' || section === 'quotations');
@@ -673,12 +844,23 @@ function onInvoiceAmountPartChange(id, field, value){
 function parseFilenameHint(name){
   let base = name.replace(/\.(jpe?g|png|webp|pdf)$/i, '');
   let date = '';
-  const m = base.match(/(\d{1,2})[._\-](\d{1,2})(?!\d)/);
-  if (m){
-    const mm = m[1].padStart(2,'0');
-    const dd = m[2].padStart(2,'0');
-    date = state.meta.year ? `${state.meta.year}-${mm}-${dd}` : `${mm}-${dd}`;
-    base = base.slice(0, m.index) + ' ' + base.slice(m.index + m[0].length);
+  const strip = (m) => { base = base.slice(0, m.index) + ' ' + base.slice(m.index + m[0].length); };
+
+  // 연·월·일이 모두 있는 파일명을 먼저 봅니다 (2026.06.23 / 2026-06-23 / 20260623).
+  // 이걸 나중에 보면 "2026.06.23" 의 "26.06" 이 월·일로 잡혀 엉뚱한 날짜가 됩니다.
+  let m = base.match(/(20\d{2})[._\-]?(\d{2})[._\-]?(\d{2})(?!\d)/);
+  if (m && makeDate(+m[1], +m[2], +m[3])){
+    date = `${m[1]}-${m[2]}-${m[3]}`;
+    strip(m);
+  } else {
+    // 월·일만 있는 경우 (6.23) — 연도는 거래처 정보에서 가져옵니다
+    m = base.match(/(\d{1,2})[._\-](\d{1,2})(?!\d)/);
+    if (m && +m[1] >= 1 && +m[1] <= 12 && +m[2] >= 1 && +m[2] <= 31){
+      const mm = m[1].padStart(2,'0');
+      const dd = m[2].padStart(2,'0');
+      date = state.meta.year ? `${state.meta.year}-${mm}-${dd}` : `${mm}-${dd}`;
+      strip(m);
+    }
   }
   base = base.replace(/이체확인증|확인증|견적서|견적/g, ' ');
   base = base.replace(/[._\-]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -687,21 +869,283 @@ function parseFilenameHint(name){
 
 function handleAttachments(evt, section){
   const files = Array.from(evt.target.files || []);
+  const added = [];
   files.forEach(file => {
     const url = URL.createObjectURL(file);
     const hint = parseFilenameHint(file.name);
+    const id = uid();
+    added.push(id);
     state[section].push({
-      id: uid(), vendor: hint.vendor, date: hint.date, amount: null,
+      id, vendor: hint.vendor, date: hint.date, amount: null,
       note: file.name, attachmentUrl: url, attachmentName: file.name
     });
   });
   renderTable(section);
   evt.target.value = '';
-  if (files.length > 0){
-    const amountLabel = section === 'quotations' ? '견적금액' : '송금액';
-    alert(`${files.length}건 첨부했어요. 파일명에서 날짜·거래처를 추측해서 채워뒀는데, 추측이라 틀릴 수 있어요 — "📎 보기"로 열어서 맞는지 확인하고 ${amountLabel}을 입력해주세요.`);
+  // 올린 즉시 판독 화면을 띄워서, 원본을 보면서 바로 입력할 수 있게 함
+  if (added.length > 0) openReadPanel(section, added[0]);
+}
+
+/* ------------------------------------------------------------------ */
+/* 첨부 판독 화면 (원본을 크게 보면서 금액·날짜 입력)                          */
+/* ------------------------------------------------------------------ */
+let readPanel = { section: null, id: null };
+
+function attachedRows(section){
+  return state[section].filter(r => r.attachmentUrl);
+}
+
+function openReadPanel(section, id){
+  const row = state[section].find(r => r.id === id);
+  if (!row || !row.attachmentUrl) return;
+  readPanel = { section, id };
+  renderReadPanel();
+  document.getElementById('readModal').classList.add('open');
+}
+
+function closeReadPanel(){
+  document.getElementById('readModal').classList.remove('open');
+  document.getElementById('readModalPreview').innerHTML = ''; // 미리보기 해제
+  readPanel = { section: null, id: null };
+}
+
+/* 첨부된 행들 사이를 앞뒤로 이동 (여러 장 연속 판독) */
+function stepReadPanel(delta){
+  const { section, id } = readPanel;
+  if (!section) return;
+  const rows = attachedRows(section);
+  const idx = rows.findIndex(r => r.id === id);
+  if (idx === -1) return;
+  const next = rows[idx + delta];
+  if (!next) return;
+  readPanel.id = next.id;
+  renderReadPanel();
+}
+
+function renderReadPanel(){
+  const { section, id } = readPanel;
+  const row = state[section].find(r => r.id === id);
+  if (!row) return;
+  const isQuote = section === 'quotations';
+  const rows = attachedRows(section);
+  const idx = rows.findIndex(r => r.id === id);
+
+  document.getElementById('readModalTitle').textContent =
+    (isQuote ? '견적서 판독' : '이체확인증 판독') + ' — ' + (row.attachmentName || '');
+  document.getElementById('readModalCount').textContent =
+    `첨부 ${idx + 1} / ${rows.length}`;
+
+  const isPdf = /\.pdf$/i.test(row.attachmentName || '');
+  document.getElementById('readModalPreview').innerHTML = isPdf
+    ? `<embed src="${row.attachmentUrl}" type="application/pdf">`
+    : `<img src="${row.attachmentUrl}" alt="${escapeHtml(row.attachmentName||'')}" onclick="this.classList.toggle('zoomed')" title="클릭하면 확대/축소">`;
+
+  const amountLabel = isQuote ? '견적금액 (공급가액+세액)' : '송금액';
+
+  /* 세금계산서(취득명세서)에 있는 상호를 버튼으로 제시 - 한 번 눌러 정확히 맞춤 */
+  const invVendors = Array.from(new Set(state.invoices.map(r => resolveVendor(r.vendor)).filter(Boolean)));
+  const vendorPicks = invVendors.length
+    ? `<div class="field">
+         <label>세금계산서 상호에서 고르기</label>
+         <div class="row-gap" style="gap:6px">
+           ${invVendors.map(v => `<button class="btn secondary small" onclick="pickReadVendor('${jsAttr(v)}')">${escapeHtml(v)}</button>`).join('')}
+         </div>
+       </div>`
+    : '';
+
+  document.getElementById('readModalForm').innerHTML = `
+    <div class="hint" style="margin:0">원본을 보면서 아래 세 칸만 채우면 표와 대사표에 바로 반영됩니다. 사진은 클릭하면 확대됩니다.</div>
+    ${vendorPicks}
+    <div class="field">
+      <label>거래처</label>
+      <input id="readVendor" value="${escapeHtml(row.vendor||'')}" placeholder="세금계산서와 같은 상호로">
+    </div>
+    <div class="field">
+      <label>${isQuote ? '견적일' : '송금일'}</label>
+      <input id="readDate" value="${escapeHtml(row.date||'')}" placeholder="2026-06-23">
+    </div>
+    <div class="field">
+      <label>${amountLabel}</label>
+      <input id="readAmount" class="amount-in" value="${numStr(row.amount)}" placeholder="0">
+    </div>
+    <div class="row-gap" style="margin:0">
+      <button class="btn secondary small" onclick="runOcrOnCurrent()">🔍 사진에서 숫자 읽기</button>
+    </div>
+    <div id="ocrArea"></div>
+    <div class="hint" style="margin:0">거래처명은 <strong>세금계산서(취득명세서)와 똑같이</strong> 적어주세요. 통장에 대표자 개인명이 찍혀 있어도 상호로 통일해야 대사표에서 묶입니다.</div>
+  `;
+
+  const vendorEl = document.getElementById('readVendor');
+  const dateEl = document.getElementById('readDate');
+  const amountEl = document.getElementById('readAmount');
+  vendorEl.oninput = () => onFieldChange(section, id, 'vendor', vendorEl.value);
+  dateEl.oninput   = () => onFieldChange(section, id, 'date', dateEl.value);
+  amountEl.oninput = () => onAmountChange(section, id, amountEl.value);
+  vendorEl.focus();
+}
+
+/* ------------------------------------------------------------------ */
+/* 사진에서 숫자 읽기 (OCR)                                                */
+/*  - 숫자만 읽습니다. 한글 상호는 인식률이 낮아 아예 시도하지 않고,             */
+/*    사업자등록번호를 읽어 취득명세서의 상호와 맞추는 방식을 씁니다.            */
+/*  - 읽은 값은 곧바로 반영하지 않고 "후보"로 보여주고 눌러서 채택합니다.        */
+/* ------------------------------------------------------------------ */
+const TESSERACT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js';
+let tesseractLoading = null;
+
+function loadTesseract(){
+  if (typeof Tesseract !== 'undefined') return Promise.resolve(Tesseract);
+  if (tesseractLoading) return tesseractLoading;
+  tesseractLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = TESSERACT_SRC;
+    s.onload = () => (typeof Tesseract !== 'undefined') ? resolve(Tesseract) : reject(new Error('로드됐지만 사용할 수 없음'));
+    s.onerror = () => reject(new Error('스크립트를 불러올 수 없음'));
+    document.head.appendChild(s);
+    setTimeout(() => reject(new Error('시간 초과')), 30000);
+  });
+  return tesseractLoading;
+}
+
+/* OCR 로 읽은 글자에서 금액·날짜·사업자등록번호 후보를 뽑아냄 */
+function extractCandidates(text){
+  const t = String(text || '');
+
+  // 사업자등록번호: 3-2-5 자리 (구분자는 하이픈·점·공백 모두 허용)
+  const bizNos = [];
+  const bizRe = /(\d{3})\s*[-–.]\s*(\d{2})\s*[-–.]\s*(\d{5})/g;
+  let m;
+  while ((m = bizRe.exec(t)) !== null) bizNos.push(`${m[1]}-${m[2]}-${m[3]}`);
+
+  // 날짜: 2026-06-23 / 2026.06.23 / 2026년 06월 23일 / 2026 06 23
+  const dates = [];
+  const dateRe = /(20\d{2})[^\d]{1,4}(\d{1,2})[^\d]{1,4}(\d{1,2})/g;
+  while ((m = dateRe.exec(t)) !== null){
+    const mo = +m[2], d = +m[3];
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31){
+      dates.push(`${m[1]}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+    }
+  }
+
+  // 금액: 천단위 쉼표가 있는 숫자만 (쉼표 없는 숫자는 수량·전화번호와 섞여 위험)
+  // OCR 은 쉼표 뒤에 공백을 끼워 넣는 일이 잦습니다("47,685, 000").
+  // 공백을 허용하지 않으면 금액이 1/1000 로 잘린 채 후보에 오르므로 반드시 받아줍니다.
+  const amounts = [];
+  const amtRe = /\d{1,3}(?:,[ ]?\d{3})+/g;
+  while ((m = amtRe.exec(t)) !== null){
+    const n = parseInt(m[0].replace(/[,\s]/g,''), 10);
+    if (n >= 10000) amounts.push(n); // 만원 미만은 단가·수량일 가능성이 높아 제외
+  }
+
+  return {
+    bizNos: Array.from(new Set(bizNos)),
+    // 이체확인증에는 "조회기준일시(오늘)"가 함께 찍히는데 실제 거래일보다 늦습니다.
+    // 오래된 날짜를 앞에 두면 거래일이 1순위로 올라옵니다.
+    dates: Array.from(new Set(dates)).sort(),
+    // 큰 금액이 합계일 가능성이 높으므로 내림차순, 중복 제거
+    amounts: Array.from(new Set(amounts)).sort((a,b) => b - a).slice(0, 8)
+  };
+}
+
+/* 사업자등록번호로 취득명세서의 상호를 찾음 (숫자만 비교) */
+function vendorByBizNo(bizNo){
+  const digits = s => String(s||'').replace(/\D/g,'');
+  const target = digits(bizNo);
+  if (target.length !== 10) return null;
+  const hit = state.invoices.find(r => digits(r.bizNo) === target);
+  return hit ? resolveVendor(hit.vendor) : null;
+}
+
+async function runOcrOnCurrent(){
+  const { section, id } = readPanel;
+  if (!section) return;
+  const row = state[section].find(r => r.id === id);
+  if (!row || !row.attachmentUrl) return;
+  if (/\.pdf$/i.test(row.attachmentName || '')){
+    setOcrStatus('PDF는 숫자 읽기를 지원하지 않아요. 화면을 보고 직접 입력해주세요.');
+    return;
+  }
+
+  setOcrStatus('사진에서 숫자를 읽고 있어요… (10~30초, 처음 한 번은 더 걸립니다)');
+  try {
+    const T = await loadTesseract();
+    // 숫자만 필요하므로 영어 모델만 사용 (한글 모델보다 가볍고 숫자 정확도가 높음)
+    const res = await T.recognize(row.attachmentUrl, 'eng');
+    const cands = extractCandidates(res && res.data ? res.data.text : '');
+    renderOcrResult(cands);
+  } catch (err) {
+    setOcrStatus('숫자 읽기를 쓸 수 없어요 (' + (err && err.message ? err.message : '원인 불명') +
+      '). 인터넷이 연결된 상태에서 HTML 파일로 열면 동작합니다. 그동안은 화면을 보고 직접 입력해주세요.');
   }
 }
+
+function setOcrStatus(msg){
+  const el = document.getElementById('ocrArea');
+  if (el) el.innerHTML = `<div class="ocr-status">${escapeHtml(msg)}</div>`;
+}
+
+function renderOcrResult(c){
+  const el = document.getElementById('ocrArea');
+  if (!el) return;
+  const isQuote = readPanel.section === 'quotations';
+
+  // 사업자등록번호로 상호를 찾으면 바로 맞춰줌 (숫자 완전일치라 안전)
+  let matchedNote = '';
+  for (const b of c.bizNos){
+    const v = vendorByBizNo(b);
+    if (v){
+      pickReadVendor(v);
+      matchedNote = `<div class="ocr-hit">✓ 사업자등록번호 ${escapeHtml(b)} → 거래처를 <strong>${escapeHtml(v)}</strong>로 맞췄습니다</div>`;
+      break;
+    }
+  }
+
+  const chips = (arr, fn, fmt) => arr.length
+    ? arr.map(x => `<button class="btn secondary small" onclick="${fn}('${jsAttr(String(x))}')">${escapeHtml(fmt(x))}</button>`).join('')
+    : '<span class="ocr-none">찾지 못했어요 — 직접 입력해주세요</span>';
+
+  el.innerHTML = `
+    ${matchedNote}
+    <div class="ocr-group">
+      <div class="ocr-label">읽어낸 ${isQuote ? '견적금액' : '송금액'} 후보 <span class="ocr-hint">(큰 금액이 위 · 눌러서 넣기)</span></div>
+      <div class="ocr-chips">${chips(c.amounts, 'useOcrAmount', v => won(v))}</div>
+    </div>
+    <div class="ocr-group">
+      <div class="ocr-label">읽어낸 날짜 후보</div>
+      <div class="ocr-chips">${chips(c.dates, 'useOcrDate', v => v)}</div>
+    </div>
+    <div class="ocr-warn">⚠️ 사진에서 기계로 읽은 값이라 <strong>틀릴 수 있습니다.</strong> 왼쪽 원본과 반드시 대조하고 넣어주세요. 은행 이체확인증은 금액·날짜가 잘 읽히지만, <strong>견적서의 "2026년 06월 23일" 같은 한글 날짜는 읽지 못합니다</strong> — 날짜는 직접 입력해주세요.</div>
+  `;
+}
+
+function useOcrAmount(v){
+  const { section, id } = readPanel;
+  if (!section) return;
+  onAmountChange(section, id, v);
+  const el = document.getElementById('readAmount');
+  if (el) el.value = numStr(parseAmountLoose(v));
+}
+
+function useOcrDate(v){
+  const { section, id } = readPanel;
+  if (!section) return;
+  onFieldChange(section, id, 'date', v);
+  const el = document.getElementById('readDate');
+  if (el) el.value = v;
+}
+
+/* 세금계산서 상호 버튼을 누르면 거래처명을 그대로 맞춰줌 (이름 불일치 방지) */
+function pickReadVendor(vendor){
+  const { section, id } = readPanel;
+  if (!section) return;
+  onFieldChange(section, id, 'vendor', vendor);
+  const el = document.getElementById('readVendor');
+  if (el) el.value = vendor;
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && readPanel.section) closeReadPanel();
+});
 
 function renderTripleRecon(bodyId){
   const body = document.getElementById(bodyId);
@@ -737,10 +1181,19 @@ function renderTripleRecon(bodyId){
     } else {
       badgeClass = 'warn'; badgeLabel = '⚠ 확인필요';
     }
-    const vKey = v.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const vKey = jsAttr(v);
     const noteVal = state.reconNotes[v] || '';
     const docs = state.reconDocs[v] || {};
-    const docCheck = (key, label) => `<label><input type="checkbox" ${docs[key]?'checked':''} onchange="onReconDocToggle('${vKey}','${key}',this.checked)"> ${label}</label>`;
+    const attachments = state.reconAttachments[v] || {};
+    const docCheck = (key, label) => {
+      const files = attachments[key] || [];
+      const fileLinks = files.map((f, fi) => `<a href="${f.url}" target="_blank" title="${escapeHtml(f.name||'')}" onclick="event.stopPropagation()">📎${files.length>1?(fi+1):''}</a>`).join('');
+      return `<div class="doc-check-item">
+        <label><input type="checkbox" ${docs[key]?'checked':''} onchange="onReconDocToggle('${vKey}','${key}',this.checked)"> ${label}</label>
+        <span class="recon-doc-files">${fileLinks}</span>
+        <button type="button" class="doc-attach-btn" title="${label} 파일 첨부" onclick="triggerReconDocAttach('${vKey}','${key}')">＋</button>
+      </div>`;
+    };
     return `<tr>
       <td>${idx + 1}</td>
       <td>${escapeHtml(v)}</td>
@@ -767,6 +1220,169 @@ function onReconNoteChange(vendor, value){
   state.reconNotes[vendor] = value;
 }
 
+/* ---------------- 대사표: 거래처별 계약서/견적서/입금증 파일 첨부 ---------------- */
+let reconDocFileTarget = null;
+function triggerReconDocAttach(vendor, key){
+  reconDocFileTarget = { vendor, key };
+  document.getElementById('reconDocFileInput').click();
+}
+function handleReconDocFileInput(evt){
+  const files = Array.from(evt.target.files || []);
+  const target = reconDocFileTarget;
+  reconDocFileTarget = null;
+  evt.target.value = '';
+  if (!target || files.length === 0) return;
+  const { vendor, key } = target;
+  if (!state.reconAttachments[vendor]) state.reconAttachments[vendor] = {};
+  if (!state.reconAttachments[vendor][key]) state.reconAttachments[vendor][key] = [];
+  files.forEach(file => {
+    state.reconAttachments[vendor][key].push({ url: URL.createObjectURL(file), name: file.name });
+  });
+  if (!state.reconDocs[vendor]) state.reconDocs[vendor] = {};
+  state.reconDocs[vendor][key] = true;
+  renderTripleRecon('reconBody');
+  renderAudit('auditBody');
+}
+
+/* ------------------------------------------------------------------ */
+/* 자동 점검 (공급시기·자료누락·금액차이)                                     */
+/* ------------------------------------------------------------------ */
+/* 'YYYY-MM-DD', 'YYYY.M.D', 'MM-DD'(연도는 거래처정보의 연도 사용) 등을 관대하게 해석 */
+/* 달력에 실제로 있는 날짜만 통과시킵니다.
+   13월·2월 30일 같은 값을 그냥 받으면 Date 가 다른 달로 넘겨버려
+   "송금일이 590일 늦음" 처럼 공급시기 점검이 조용히 틀어집니다. */
+function makeDate(y, mo, d){
+  if (!(y >= 1900 && y <= 2200)) return null;
+  if (!(mo >= 1 && mo <= 12)) return null;
+  if (!(d >= 1 && d <= 31)) return null;
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  if (dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null; // 2월 30일 등
+  return { y, m: mo, d };
+}
+function parseDateLoose(v){
+  if (v === undefined || v === null || v === '') return null;
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/);
+  if (m) return makeDate(+m[1], +m[2], +m[3]);
+  m = s.match(/^(\d{1,2})[-./](\d{1,2})$/);
+  if (m){
+    const y = parseInt(state.meta.year, 10);
+    if (!y) return null; // 연도를 모르면 날짜 점검에서 제외
+    return makeDate(y, +m[1], +m[2]);
+  }
+  return null;
+}
+function dateTs(p){ return Date.UTC(p.y, p.m - 1, p.d); }
+function fmtMd(p){ return `${p.m}/${p.d}`; }
+function dayDiff(a, b){ return Math.round((dateTs(a) - dateTs(b)) / 86400000); }
+
+/* 거래처 하나에 대해 확인할 점을 찾아 [{level:'warn'|'info', text}] 로 반환 */
+function auditVendor(v){
+  const issues = [];
+  const inv = state.invoices.filter(r => resolveVendor(r.vendor) === v);
+  const qs  = state.quotations.filter(r => resolveVendor(r.vendor) === v);
+  const trs = state.transfers.filter(r => resolveVendor(r.vendor) === v);
+  const docs = state.reconDocs[v] || {};
+  const sum = arr => arr.reduce((s,r) => s + (Number(r.amount)||0), 0);
+  const invSum = sum(inv), qSum = sum(qs), trSum = sum(trs);
+
+  /* 1) 자료 누락 / 미확인 */
+  const missingHard = [];
+  const missingSoft = [];
+  if (inv.length === 0) missingHard.push('세금계산서(취득명세서)');
+  if (trs.length === 0) missingHard.push('송금내역');
+  if (qs.length === 0) missingSoft.push('견적서');
+  if (!docs.contract) missingSoft.push('계약서');
+  if (missingHard.length) issues.push({ level:'warn', text:`자료 없음: ${missingHard.join(', ')} — 조기환급 소명자료로 필요합니다` });
+  if (missingSoft.length) issues.push({ level:'info', text:`미첨부/미확인: ${missingSoft.join(', ')}` });
+
+  /* 2) 금액 차이 */
+  if (inv.length && trs.length && invSum !== trSum){
+    issues.push({ level:'warn', text:`세금계산서 ${won(invSum)} ↔ 송금 ${won(trSum)} (차액 ${won(Math.abs(invSum-trSum))}) — 잔금 미지급·분할지급 여부 확인` });
+  }
+  if (inv.length && qs.length && invSum !== qSum){
+    issues.push({ level:'info', text:`세금계산서 ${won(invSum)} ↔ 견적서 ${won(qSum)} (차액 ${won(Math.abs(invSum-qSum))}) — 추가공사·변경계약 여부 확인` });
+  }
+
+  /* 3) 공급시기 관련 날짜 점검 */
+  const invD = inv.map(r => parseDateLoose(r.date)).filter(Boolean).sort((a,b)=>dateTs(a)-dateTs(b));
+  const qD   = qs.map(r => parseDateLoose(r.date)).filter(Boolean).sort((a,b)=>dateTs(a)-dateTs(b));
+  const trD  = trs.map(r => parseDateLoose(r.date)).filter(Boolean).sort((a,b)=>dateTs(a)-dateTs(b));
+
+  const noDateCount = (inv.length - invD.length) + (qs.length - qD.length) + (trs.length - trD.length);
+  if (noDateCount > 0){
+    issues.push({ level:'info', text:`날짜 미입력 ${noDateCount}건 — 날짜 점검에서 제외됨 (연도·날짜를 넣으면 함께 점검됩니다)` });
+  }
+
+  const targetMonth = parseInt(state.meta.month, 10);
+  if (targetMonth && invD.length){
+    const outside = invD.filter(p => p.m !== targetMonth);
+    if (outside.length){
+      issues.push({ level:'warn', text:`세금계산서 작성일 ${outside.map(fmtMd).join(', ')}이(가) 조기환급 대상월(${targetMonth}월) 밖 — 신고 대상기간 확인` });
+    }
+  }
+
+  if (invD.length && trD.length){
+    const firstInv = invD[0], firstTr = trD[0], lastTr = trD[trD.length-1];
+    const preDays = dayDiff(firstInv, firstTr); // 송금이 세금계산서보다 먼저면 양수
+    if (preDays > 0){
+      issues.push({
+        level: preDays >= 30 ? 'warn' : 'info',
+        text: `송금일(${fmtMd(firstTr)})이 세금계산서 작성일(${fmtMd(firstInv)})보다 ${preDays}일 빠름 — 선급금·중간지급조건부 해당 여부와 공급시기 확인`
+      });
+    }
+    const lateDays = dayDiff(lastTr, invD[invD.length-1]);
+    if (lateDays >= 30){
+      issues.push({ level:'info', text:`마지막 송금일(${fmtMd(lastTr)})이 세금계산서 작성일보다 ${lateDays}일 늦음 — 잔금 지급시기·계약조건 확인` });
+    }
+  }
+
+  if (invD.length && qD.length){
+    const lateQuote = qD.filter(p => dayDiff(p, invD[0]) > 0);
+    if (lateQuote.length){
+      issues.push({ level:'warn', text:`견적서일(${lateQuote.map(fmtMd).join(', ')})이 세금계산서 작성일(${fmtMd(invD[0])})보다 늦음 — 서류 일자 앞뒤 확인` });
+    }
+  }
+
+  return issues;
+}
+
+function auditVendorList(){
+  return Array.from(new Set([
+    ...state.invoices.map(r=>resolveVendor(r.vendor)).filter(Boolean),
+    ...state.quotations.map(r=>resolveVendor(r.vendor)).filter(Boolean),
+    ...state.transfers.map(r=>resolveVendor(r.vendor)).filter(Boolean)
+  ]));
+}
+
+/* 확인필요가 하나라도 있으면 그 거래처를 위로 (같은 등급이면 입력 순서 유지) */
+function auditRank(issues){
+  if (issues.some(i => i.level === 'warn')) return 0;
+  return issues.length ? 1 : 2;
+}
+
+function renderAudit(bodyId){
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  const vendors = auditVendorList();
+  if (vendors.length === 0){
+    body.innerHTML = `<tr><td colspan="2" style="color:#8a8272">거래처 자료를 입력하면 확인할 점을 자동으로 찾아드려요.</td></tr>`;
+    return;
+  }
+  const rows = vendors.map(v => ({ v, issues: auditVendor(v) }));
+  rows.sort((a,b) => auditRank(a.issues) - auditRank(b.issues));
+  body.innerHTML = rows.map(({v, issues}) => {
+    const sorted = issues.slice().sort((a,b) => (a.level==='warn'?0:1) - (b.level==='warn'?0:1));
+    const list = sorted.length
+      ? `<ul class="audit-list">${sorted.map(i => `<li class="${i.level}">${escapeHtml(i.text)}</li>`).join('')}</ul>`
+      : `<span style="color:#8a8272">입력된 자료 기준으로 특이사항 없음</span>`;
+    return `<tr>
+      <td>${escapeHtml(v)}</td>
+      <td>${list}</td>
+    </tr>`;
+  }).join('');
+}
+
 function updateDerived(){
   const invoiceTotal = state.invoices.reduce((s,r)=>s+(Number(r.amount)||0),0);
   const quotationTotal = state.quotations.reduce((s,r)=>s+(Number(r.amount)||0),0);
@@ -778,6 +1394,7 @@ function updateDerived(){
   document.getElementById('transferTotal').textContent = won(transferTotal);
 
   renderTripleRecon('reconBody');
+  renderAudit('auditBody');
 
   // 매출현황 합계/차이
   const actualTotal = state.sales.items.reduce((s,r)=>s+(Number(r.amount)||0),0);
@@ -801,7 +1418,8 @@ function onFieldChange(section,id,field,value){
   const row = state[section].find(r=>r.id===id);
   if (!row) return;
   row[field] = value;
-  if (field==='vendor') updateDerived();
+  // 거래처명과 일자는 대사표·자동점검의 계산 근거라 바뀌면 다시 그림
+  if (field==='vendor' || field==='date') updateDerived();
 }
 function onAmountChange(section,id,value){
   const row = state[section].find(r=>r.id===id);
@@ -882,7 +1500,7 @@ function applyQuickSales(){
 function resetAll(){
   state = {
     meta:{clientName:'',manager:'',year:'',periodType:'',month:'',taxOffice:'',officer:'',officerPhone:''}, invoices:[], quotations:[], transfers:[],
-    sales:{items:[],reported:null,note:''}, reconNotes:{}, reconDocs:{}
+    sales:{items:[],reported:null,note:''}, reconNotes:{}, reconDocs:{}, reconAttachments:{}
   };
   seedDefaultSalesItems();
   syncMetaInputs();
@@ -904,12 +1522,14 @@ function syncMetaInputs(){
 ['metaClient','metaManager','metaYear','metaPeriodType','metaMonth','metaTaxOffice','metaOfficer','metaOfficerPhone'].forEach(idName=>{
   document.addEventListener('DOMContentLoaded', ()=>{
     const map = { metaClient:'clientName', metaManager:'manager', metaYear:'year', metaPeriodType:'periodType', metaMonth:'month', metaTaxOffice:'taxOffice', metaOfficer:'officer', metaOfficerPhone:'officerPhone' };
-    document.getElementById(idName).addEventListener('input', e=>{
+    // 연도·대상월은 자동 점검(공급시기)의 기준이라 바뀌면 점검표를 다시 그림
+    const affectsAudit = (idName === 'metaYear' || idName === 'metaMonth');
+    const apply = e => {
       state.meta[map[idName]] = e.target.value;
-    });
-    document.getElementById(idName).addEventListener('change', e=>{
-      state.meta[map[idName]] = e.target.value;
-    });
+      if (affectsAudit) renderAudit('auditBody');
+    };
+    document.getElementById(idName).addEventListener('input', apply);
+    document.getElementById(idName).addEventListener('change', apply);
   });
 });
 
@@ -1024,7 +1644,7 @@ function openMappingPanel(section){
   const { headers, dataRows } = pendingImport;
   const prefix = idPrefix(section);
   const vendorKw = ['상호','거래처','공급자','수취','예금주','성명','업체'];
-  const dateKw = ['작성일자','일자','날짜','거래일','이체일'];
+  const dateKw = ['작성일자','견적일','일자','날짜','거래일','이체일'];
   const totalKw = section==='transfers'
     ? ['이체금액','입금액','출금액','금액','합계']
     : ['합계','공급대가','총액'];
@@ -1143,7 +1763,8 @@ function loadClient(key){
     transfers: payload.transfers || [],
     sales: payload.sales && payload.sales.items ? payload.sales : { items: [], reported: payload.sales?.reported ?? null, note: payload.sales?.note || '' },
     reconNotes: payload.reconNotes || {},
-    reconDocs: payload.reconDocs || {}
+    reconDocs: payload.reconDocs || {},
+    reconAttachments: payload.reconAttachments || {}
   };
   if (!state.sales.items || state.sales.items.length === 0) seedDefaultSalesItems();
   syncMetaInputs();
@@ -1226,8 +1847,8 @@ function exportExcel(){
   formulaCells.push({ r: invoiceTotalRow, c: 9, f: `SUM(J${invoiceStart+1}:J${invoiceEnd+1})`, v: invoiceTotalValue, t:'n' });
   push([]);
 
-  push(['3. 견적서 현황']);
-  push(['No','공급자','작성일자','견적금액','비고']);
+  push(['3. 견적서 내역']);
+  push(['No','거래처','견적일','견적금액','비고']);
   const quoteStart = rows.length;
   state.quotations.forEach((r,i)=>push([i+1, r.vendor, r.date, r.amount, r.note]));
   for (let i=0;i<BUFFER;i++) push(['','','','','']);
@@ -1238,7 +1859,7 @@ function exportExcel(){
   push([]);
 
   push(['4. 송금내역']);
-  push(['No','수취자','송금일','송금액','비고']);
+  push(['No','거래처','송금일','송금액','비고']);
   const transferStart = rows.length;
   state.transfers.forEach((r,i)=>push([i+1, r.vendor, r.date, r.amount, r.note]));
   for (let i=0;i<BUFFER;i++) push(['','','','','']);
@@ -1271,7 +1892,11 @@ function exportExcel(){
     const trSum = vendorName ? sumFor(transferResolved, vendorName) : '';
     const status = vendorName ? ((invSum === quoteSum && quoteSum === trSum) ? '일치' : '확인필요') : '';
     const docs = vendorName ? (state.reconDocs[vendorName] || {}) : {};
-    const docsText = Object.keys(docLabels).filter(k => docs[k]).map(k => docLabels[k]).join(', ');
+    const atts = vendorName ? (state.reconAttachments[vendorName] || {}) : {};
+    const docsText = Object.keys(docLabels).filter(k => docs[k]).map(k => {
+      const files = atts[k] || [];
+      return files.length ? `${docLabels[k]}(${files.map(f=>f.name).join('; ')})` : docLabels[k];
+    }).join(', ');
     const note = vendorName ? (state.reconNotes[vendorName] || '') : '';
     const no = vendorName ? (++tripleRowNo) : '';
     const r = push([no, vendorName, invSum, quoteSum, trSum, status, docsText, note]);
@@ -1283,6 +1908,28 @@ function exportExcel(){
   };
   allVendors.forEach(v => addTripleReconRow(v));
   for (let i=0;i<BUFFER;i++) addTripleReconRow(''); // 새 거래처명을 직접 적으면 자동으로 계산되는 여분 줄
+  push([]);
+
+  push(['6. 자동 점검 (공급시기·자료누락·금액차이)']);
+  push(['거래처','확인할 점']);
+  const auditRows = auditVendorList().map(v => ({ v, issues: auditVendor(v) }));
+  auditRows.sort((a,b) => auditRank(a.issues) - auditRank(b.issues));
+  if (auditRows.length === 0){
+    push(['','입력된 거래처 자료가 없습니다']);
+  } else {
+    auditRows.forEach(({v, issues}) => {
+      if (issues.length === 0){
+        push([v, '입력된 자료 기준으로 특이사항 없음']);
+      } else {
+        const sorted = issues.slice().sort((a,b) => (a.level==='warn'?0:1) - (b.level==='warn'?0:1));
+        sorted.forEach((iss, idx) => {
+          push([idx === 0 ? v : '', `${iss.level === 'warn' ? '[확인필요] ' : '[참고] '}${iss.text}`]);
+        });
+      }
+    });
+  }
+  push([]);
+  push(['', '※ 자동 점검은 입력된 날짜·금액만 본 추정입니다. 반드시 원본 서류로 확인하고, 공급시기 판단은 담당 세무사 검토를 거쳐주세요.']);
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -1293,7 +1940,34 @@ function exportExcel(){
   ws['!cols'] = [{wch:22},{wch:24},{wch:16},{wch:18},{wch:40},{wch:14},{wch:12},{wch:8},{wch:14},{wch:16}];
   XLSX.utils.book_append_sheet(wb, ws, '조기환급체크');
   const filename = `조기환급체크_${sanitizeKey(state.meta.clientName||'거래처')}_${sanitizeKey(periodLabel())}.xlsx`;
-  XLSX.writeFile(wb, filename);
+  saveWorkbook(wb, filename);
+}
+
+/* 엑셀 저장
+   - 파일을 컴퓨터에서 직접 열었을 때: 브라우저 기본 다운로드 (기존 방식 그대로)
+   - claude.ai 아티팩트로 열었을 때: 뷰어가 직접 다운로드를 막으므로 저장 권한을 통해 내려받음 */
+function saveWorkbook(wb, filename){
+  const claudeHost = (typeof window !== 'undefined' && window.claude && typeof window.claude.use === 'function') ? window.claude : null;
+  if (!claudeHost){
+    XLSX.writeFile(wb, filename);
+    return;
+  }
+  const buf = XLSX.write(wb, { type:'array', bookType:'xlsx' });
+  claudeHost.use('downloads').then(downloads => {
+    if (!downloads){
+      XLSX.writeFile(wb, filename); // 저장 권한이 없으면 일반 다운로드로 시도
+      return;
+    }
+    return downloads.save({ filename, data: new Blob([buf]) });
+  }).catch(err => {
+    const code = err && err.code;
+    if (code === 'declined') return; // 저장을 취소한 경우엔 조용히 넘어감
+    if (code === 'rate_limited'){
+      alert('저장 창이 이미 열려 있어요. 잠시 뒤에 다시 눌러주세요.');
+      return;
+    }
+    alert('엑셀 저장에 실패했어요. HTML 파일을 컴퓨터에 내려받아 열면 저장이 잘 됩니다.\n(사유: ' + (code || (err && err.message) || '알 수 없음') + ')');
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -1309,5 +1983,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderSavedList();
 });
 </script>
+</div>
 </body>
 </html>
