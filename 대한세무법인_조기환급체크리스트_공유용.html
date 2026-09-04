@@ -303,9 +303,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="field"><label>조사관 연락처</label><input id="metaOfficerPhone"></div>
     </div>
 
-    <div class="hint" style="margin-top:4px">관할세무서를 모르면, 주소나 동네 이름으로 검색해보세요 (예: 분당구, 야탑동, 중원구).</div>
+    <div class="hint" style="margin-top:4px">관할세무서는 위 칸에 직접 적어도 되고, 아래에서 <strong>동네·세무서 이름으로 찾아 눌러 넣어도</strong> 됩니다 (예: 야탑동, 성남).</div>
     <div class="map-grid" style="grid-template-columns: 2fr auto; margin-bottom:0;">
-      <div class="field"><input id="taxOfficeSearch" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchTaxOffice();}"></div>
+      <div class="field"><input id="taxOfficeSearch" placeholder="동네 또는 세무서 이름" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchTaxOffice();}"></div>
       <div class="field" style="display:flex; align-items:flex-end;"><button class="btn secondary small" onclick="searchTaxOffice()">검색</button></div>
     </div>
     <div id="taxOfficeResults" class="hint"></div>
