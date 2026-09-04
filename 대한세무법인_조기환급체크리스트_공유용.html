@@ -1523,7 +1523,34 @@ function exportExcel(){
   ws['!cols'] = [{wch:22},{wch:24},{wch:38},{wch:18},{wch:40},{wch:14},{wch:12},{wch:8},{wch:14},{wch:16}];
   XLSX.utils.book_append_sheet(wb, ws, '조기환급체크');
   const filename = `조기환급체크_${sanitizeKey(state.meta.clientName||'거래처')}_${sanitizeKey(periodLabel())}.xlsx`;
-  XLSX.writeFile(wb, filename);
+  saveWorkbook(wb, filename);
+}
+
+/* 엑셀 저장
+   - 파일을 컴퓨터에서 직접 열었을 때: 브라우저 기본 다운로드 (기존 방식 그대로)
+   - claude.ai 아티팩트로 열었을 때: 뷰어가 직접 다운로드를 막으므로 저장 권한을 통해 내려받음 */
+function saveWorkbook(wb, filename){
+  const claudeHost = (typeof window !== 'undefined' && window.claude && typeof window.claude.use === 'function') ? window.claude : null;
+  if (!claudeHost){
+    XLSX.writeFile(wb, filename);
+    return;
+  }
+  const buf = XLSX.write(wb, { type:'array', bookType:'xlsx' });
+  claudeHost.use('downloads').then(downloads => {
+    if (!downloads){
+      XLSX.writeFile(wb, filename); // 저장 권한이 없으면 일반 다운로드로 시도
+      return;
+    }
+    return downloads.save({ filename, data: new Blob([buf]) });
+  }).catch(err => {
+    const code = err && err.code;
+    if (code === 'declined') return; // 저장을 취소한 경우엔 조용히 넘어감
+    if (code === 'rate_limited'){
+      alert('저장 창이 이미 열려 있어요. 잠시 뒤에 다시 눌러주세요.');
+      return;
+    }
+    alert('엑셀 저장에 실패했어요. HTML 파일을 컴퓨터에 내려받아 열면 저장이 잘 됩니다.\n(사유: ' + (code || (err && err.message) || '알 수 없음') + ')');
+  });
 }
 
 /* ------------------------------------------------------------------ */
