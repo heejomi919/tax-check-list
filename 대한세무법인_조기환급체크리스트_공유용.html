@@ -304,7 +304,6 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <button class="btn" onclick="saveClient()">💾 저장</button>
       <button class="btn secondary" onclick="exportExcel()">⬇ 엑셀로 다운로드</button>
       <button class="btn secondary" onclick="if(confirm('현재 화면 내용을 모두 지울까요?')) resetAll()">새로 시작</button>
-      <button class="btn secondary" id="downloadSelfBtn" style="display:none" onclick="downloadSelf()" title="이 도구를 내 컴퓨터에 HTML 파일로 저장합니다">💾 이 도구를 HTML 파일로 받기</button>
     </div>
     <div id="savedList" class="savedlist"></div>
   </div>
@@ -1934,66 +1933,6 @@ function exportExcel(){
   saveWorkbook(wb, filename);
 }
 
-/* ------------------------------------------------------------------ */
-/* 이 도구 자체를 HTML 파일로 저장                                          */
-/* (링크로 접속한 직원이 자기 컴퓨터에 사본을 받아가도록)                        */
-/* ------------------------------------------------------------------ */
-/* 화면에 그려진 표는 JS가 만든 것이라, 내려받은 파일에 남으면 저장값과 어긋납니다.
-   그래서 사본을 만들 때 이 컨테이너들을 비웁니다. */
-const RENDERED_CONTAINERS = [
-  'invoiceBody','quotationBody','transferBody','salesBody',
-  'reconBody','auditBody',
-  'readModalPreview','readModalForm','savedList','taxOfficeResults'
-];
-
-function buildStandaloneHtml(){
-  const clone = document.documentElement.cloneNode(true);
-  RENDERED_CONTAINERS.forEach(id => {
-    const el = clone.querySelector('#' + id);
-    if (el) el.innerHTML = '';
-  });
-  const modal = clone.querySelector('#readModal');
-  if (modal) modal.classList.remove('open');       // 판독창이 열린 채로 저장되지 않게
-  const btn = clone.querySelector('#downloadSelfBtn');
-  if (btn) btn.style.display = 'none';             // 내려받은 파일에서는 이 버튼이 필요 없음
-  return '<!DOCTYPE html>\n' + clone.outerHTML;
-}
-
-function downloadSelf(){
-  const claudeHost = (typeof window !== 'undefined' && window.claude && typeof window.claude.use === 'function') ? window.claude : null;
-  if (!claudeHost){
-    alert('이 화면은 이미 HTML 파일로 열려 있어요. 그 파일을 그대로 복사해서 전달하시면 됩니다.');
-    return;
-  }
-  const html = buildStandaloneHtml();
-  claudeHost.use('downloads').then(downloads => {
-    if (!downloads){
-      alert('이 화면에서는 파일 저장을 쓸 수 없어요. 담당자에게 HTML 파일을 요청해주세요.');
-      return;
-    }
-    return downloads.save({
-      filename: '대한세무법인_조기환급체크리스트.html',
-      data: new Blob([html], { type: 'text/html' })
-    });
-  }).catch(err => {
-    const code = err && err.code;
-    if (code === 'declined') return;               // 저장을 취소한 경우
-    if (code === 'rate_limited'){
-      alert('저장 창이 이미 열려 있어요. 잠시 뒤에 다시 눌러주세요.');
-      return;
-    }
-    alert('파일 저장에 실패했어요. (사유: ' + (code || (err && err.message) || '알 수 없음') + ')');
-  });
-}
-
-/* 링크(아티팩트)로 열었을 때만 "HTML 파일로 받기" 버튼을 보여줌 */
-function syncDownloadSelfBtn(){
-  const btn = document.getElementById('downloadSelfBtn');
-  if (!btn) return;
-  const inHost = typeof window !== 'undefined' && window.claude && typeof window.claude.use === 'function';
-  btn.style.display = inHost ? '' : 'none';
-}
-
 /* 엑셀 저장
    - 파일을 컴퓨터에서 직접 열었을 때: 브라우저 기본 다운로드 (기존 방식 그대로)
    - claude.ai 아티팩트로 열었을 때: 뷰어가 직접 다운로드를 막으므로 저장 권한을 통해 내려받음 */
@@ -2032,9 +1971,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderTable('transfers');
   renderSalesTable();
   renderSavedList();
-  // window.claude 는 아티팩트에서 주입되므로 조금 늦게 들어올 수도 있어 한 번 더 확인
-  syncDownloadSelfBtn();
-  setTimeout(syncDownloadSelfBtn, 1500);
 });
 </script>
 </div>
