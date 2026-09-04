@@ -149,6 +149,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .step-t { font-family:var(--serif); font-size:14px; font-weight:800; color:var(--navy); margin:4px 0 8px; }
   .step ul { padding-left:15px; }
   .guide-first { margin-top:12px; padding:9px 12px; background:var(--paper-2); border-radius:4px; font-size:12.5px; }
+  .guide-tree { margin:0; padding:11px 13px; background:#fffdf9; border:1px solid var(--line); border-radius:4px; font-family:var(--mono); font-size:11.5px; line-height:1.7; overflow-x:auto; white-space:pre; }
+  .guide code { font-family:var(--mono); font-size:11.5px; background:var(--paper-2); padding:1px 4px; border-radius:3px; }
   .guide-warn { }
   .guide-warn li strong { color:var(--navy); }
   .guide-note { margin-top:16px; padding:10px 12px; background:var(--warn-bg); border-left:3px solid var(--warn); border-radius:3px; font-size:12px; color:#7a3a20; }
@@ -221,13 +223,24 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
             <div class="step-n">3</div>
             <div class="step-t">넘기기</div>
             <ul>
-              <li><strong>⬇ 엑셀로 다운로드</strong>로 결과 보관</li>
+              <li><strong>⬇ 엑셀로 다운로드</strong> → 아래 폴더에 원본 사진과 함께 보관</li>
               <li>확인필요 건은 원본 대조 후 세무사님께 전달</li>
             </ul>
           </div>
         </div>
 
         <div class="guide-first">시작 전에 <strong>연도</strong>와 <strong>조기환급 대상월</strong>을 먼저 넣어주세요. 이게 없으면 날짜 점검이 돌지 않습니다.</div>
+
+        <h3>보관 폴더와 파일명</h3>
+        <p style="margin:0 0 8px">📎 첨부는 창을 닫으면 끊기니, <strong>원본 사진은 아래처럼 폴더에 남기고</strong> 엑셀을 같은 폴더에 받아두세요. 다음에 열 때 이 폴더만 있으면 됩니다.</p>
+        <pre class="guide-tree">조기환급/
+└ 2026-07_놀pc방당하동점/          ← 대상월_거래처 (숫자로 시작해 자동 정렬)
+  ├ 1_취득명세서/   위하고에서 받은 엑셀 원본
+  ├ 2_견적서/       견적서_6.23_혜성.jpg
+  ├ 3_송금증/       이체확인증_6.23_혜성.pdf
+  ├ 4_계약서/       계약서_혜성.pdf
+  └ 조기환급체크_놀pc방당하동점_2026년_1기예정_(7월).xlsx   ← 도구에서 받은 엑셀</pre>
+        <p style="margin:8px 0 0"><strong>파일명은 <code>서류종류_월.일_거래처</code> 순서로</strong> 적어주세요 (예: <code>견적서_6.23_혜성.jpg</code>). 이렇게 두면 사진을 올릴 때 <strong>날짜와 거래처가 미리 채워집니다.</strong> <code>혜성_2026.06.23.jpg</code>처럼 연월일을 다 써도 되고, 휴대폰·카톡 기본 파일명(<code>KakaoTalk_20260623_...</code>)도 날짜를 알아냅니다. 거래처명은 <strong>세금계산서 상호</strong>로 쓰세요.</p>
 
         <h3>꼭 알아두기</h3>
         <ul class="guide-warn">
@@ -820,12 +833,23 @@ function onInvoiceAmountPartChange(id, field, value){
 function parseFilenameHint(name){
   let base = name.replace(/\.(jpe?g|png|webp|pdf)$/i, '');
   let date = '';
-  const m = base.match(/(\d{1,2})[._\-](\d{1,2})(?!\d)/);
-  if (m){
-    const mm = m[1].padStart(2,'0');
-    const dd = m[2].padStart(2,'0');
-    date = state.meta.year ? `${state.meta.year}-${mm}-${dd}` : `${mm}-${dd}`;
-    base = base.slice(0, m.index) + ' ' + base.slice(m.index + m[0].length);
+  const strip = (m) => { base = base.slice(0, m.index) + ' ' + base.slice(m.index + m[0].length); };
+
+  // 연·월·일이 모두 있는 파일명을 먼저 봅니다 (2026.06.23 / 2026-06-23 / 20260623).
+  // 이걸 나중에 보면 "2026.06.23" 의 "26.06" 이 월·일로 잡혀 엉뚱한 날짜가 됩니다.
+  let m = base.match(/(20\d{2})[._\-]?(\d{2})[._\-]?(\d{2})(?!\d)/);
+  if (m && makeDate(+m[1], +m[2], +m[3])){
+    date = `${m[1]}-${m[2]}-${m[3]}`;
+    strip(m);
+  } else {
+    // 월·일만 있는 경우 (6.23) — 연도는 거래처 정보에서 가져옵니다
+    m = base.match(/(\d{1,2})[._\-](\d{1,2})(?!\d)/);
+    if (m && +m[1] >= 1 && +m[1] <= 12 && +m[2] >= 1 && +m[2] <= 31){
+      const mm = m[1].padStart(2,'0');
+      const dd = m[2].padStart(2,'0');
+      date = state.meta.year ? `${state.meta.year}-${mm}-${dd}` : `${mm}-${dd}`;
+      strip(m);
+    }
   }
   base = base.replace(/이체확인증|확인증|견적서|견적/g, ' ');
   base = base.replace(/[._\-]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -1213,16 +1237,27 @@ function handleReconDocFileInput(evt){
 /* 자동 점검 (공급시기·자료누락·금액차이)                                     */
 /* ------------------------------------------------------------------ */
 /* 'YYYY-MM-DD', 'YYYY.M.D', 'MM-DD'(연도는 거래처정보의 연도 사용) 등을 관대하게 해석 */
+/* 달력에 실제로 있는 날짜만 통과시킵니다.
+   13월·2월 30일 같은 값을 그냥 받으면 Date 가 다른 달로 넘겨버려
+   "송금일이 590일 늦음" 처럼 공급시기 점검이 조용히 틀어집니다. */
+function makeDate(y, mo, d){
+  if (!(y >= 1900 && y <= 2200)) return null;
+  if (!(mo >= 1 && mo <= 12)) return null;
+  if (!(d >= 1 && d <= 31)) return null;
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  if (dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null; // 2월 30일 등
+  return { y, m: mo, d };
+}
 function parseDateLoose(v){
   if (v === undefined || v === null || v === '') return null;
   const s = String(v).trim();
   let m = s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/);
-  if (m) return { y:+m[1], m:+m[2], d:+m[3] };
+  if (m) return makeDate(+m[1], +m[2], +m[3]);
   m = s.match(/^(\d{1,2})[-./](\d{1,2})$/);
   if (m){
     const y = parseInt(state.meta.year, 10);
     if (!y) return null; // 연도를 모르면 날짜 점검에서 제외
-    return { y, m:+m[1], d:+m[2] };
+    return makeDate(y, +m[1], +m[2]);
   }
   return null;
 }
