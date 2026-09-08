@@ -2,460 +2,444 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --plane:#f6f6f2;
-  --surface:#fcfcfb;
-  --ink:#0b0b0b;
-  --ink-2:#52514e;
-  --muted:#898781;
-  --rule:#e1e0d9;
-  --axis:#c3c2b7;
-  --accent:#2a78d6;
-  --s2:#eb6834;
-  --s3:#1baf7a;
-  --critical:#d03b3b;
-  --good:#006300;
-  --wash:rgba(42,120,214,.10);
-  --tip-bg:#0b0b0b;
-  --tip-ink:#fcfcfb;
+  --plane:#f6f6f2; --surface:#fcfcfb; --ink:#0b0b0b; --ink-2:#3f3e3b; --muted:#7d7b75;
+  --rule:#e1e0d9; --axis:#c3c2b7;
+  --accent:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --critical:#d03b3b; --good:#006300;
+  --tip-bg:#0b0b0b; --tip-ink:#fcfcfb;
   --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --serif:"Noto Serif KR","Apple SD Gothic Neo",Georgia,serif;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --plane:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
-    --rule:#2c2c2a; --axis:#383835; --accent:#3987e5; --s2:#d95926; --s3:#199e70;
-    --critical:#d03b3b; --good:#0ca30c; --wash:rgba(57,135,229,.16);
-    --tip-bg:#fcfcfb; --tip-ink:#0b0b0b;
-  }
-}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --plane:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink-2:#d6d5cc; --muted:#95938c;
+  --rule:#2c2c2a; --axis:#383835;
+  --accent:#3987e5; --s2:#d95926; --s3:#199e70;
+  --critical:#e66767; --good:#0ca30c; --tip-bg:#fcfcfb; --tip-ink:#0b0b0b;
+}}
 :root[data-theme="dark"]{
-  --plane:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
-  --rule:#2c2c2a; --axis:#383835; --accent:#3987e5; --s2:#d95926; --s3:#199e70;
-  --critical:#d03b3b; --good:#0ca30c; --wash:rgba(57,135,229,.16);
-  --tip-bg:#fcfcfb; --tip-ink:#0b0b0b;
+  --plane:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink-2:#d6d5cc; --muted:#95938c;
+  --rule:#2c2c2a; --axis:#383835;
+  --accent:#3987e5; --s2:#d95926; --s3:#199e70;
+  --critical:#e66767; --good:#0ca30c; --tip-bg:#fcfcfb; --tip-ink:#0b0b0b;
 }
 *{box-sizing:border-box}
-body{background:var(--plane);color:var(--ink);font-family:var(--sans);line-height:1.68;
-  -webkit-font-smoothing:antialiased;padding:0 20px 72px}
-.wrap{max-width:1060px;margin:0 auto}
+body{background:var(--plane);color:var(--ink);font-family:var(--sans);
+  font-size:17px;line-height:1.78;-webkit-font-smoothing:antialiased;padding:0 22px 80px}
+.wrap{max-width:900px;margin:0 auto}
 
-/* ── header ── */
-.masthead{padding:56px 0 28px;border-bottom:2px solid var(--ink)}
-.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 18px}
-h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,5.2vw,46px);line-height:1.22;
-  letter-spacing:-.015em;margin:0;text-wrap:balance}
-.dek{max-width:62ch;font-size:16.5px;color:var(--ink-2);margin:16px 0 0}
-.stamp{display:flex;flex-wrap:wrap;gap:6px 26px;margin:24px 0 0;
-  font-family:var(--mono);font-size:12px;color:var(--muted)}
-.stamp b{font-weight:500;color:var(--ink-2)}
+/* header */
+.top{padding:60px 0 30px;border-bottom:2px solid var(--ink)}
+.co{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--muted);margin:0 0 20px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(32px,5.6vw,48px);line-height:1.2;
+  letter-spacing:-.02em;margin:0;text-wrap:balance}
+.sub{font-size:19px;color:var(--ink-2);margin:18px 0 0;max-width:34em}
+.asof{display:flex;flex-wrap:wrap;gap:4px 24px;margin:22px 0 0;
+  font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.asof b{font-weight:500;color:var(--ink-2)}
 
-/* ── section shell: mono rail + content ── */
-section{display:grid;grid-template-columns:1fr;gap:14px 34px;
-  padding:44px 0;border-bottom:1px solid var(--rule)}
-@media (min-width:900px){section{grid-template-columns:150px 1fr}}
-.rail{font-family:var(--mono);font-size:11.5px;line-height:1.6;color:var(--muted);
-  letter-spacing:.03em;padding-top:6px}
-.rail .no{display:block;color:var(--ink);font-size:13px;letter-spacing:.1em}
-.rail .cite{display:block;margin-top:8px;text-wrap:pretty}
-h2{font-family:var(--serif);font-weight:700;font-size:23px;letter-spacing:-.01em;margin:0 0 6px}
-h3{font-family:var(--sans);font-weight:600;font-size:15.5px;margin:26px 0 8px;letter-spacing:-.005em}
-h3:first-child{margin-top:0}
-p{margin:0 0 12px;max-width:66ch}
-p.lead{font-size:16.5px;color:var(--ink-2)}
+/* sections */
+section{padding:52px 0;border-bottom:1px solid var(--rule)}
+.step{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--accent);margin:0 0 10px}
+h2{font-family:var(--serif);font-weight:700;font-size:clamp(24px,3.6vw,31px);line-height:1.32;
+  letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance}
+h3{font-size:19px;font-weight:600;margin:34px 0 10px;letter-spacing:-.01em}
+p{margin:0 0 14px;max-width:36em}
+.big{font-size:19px;color:var(--ink-2)}
 strong{font-weight:600}
+em{font-style:normal;background:linear-gradient(transparent 62%,rgba(42,120,214,.22) 62%);font-weight:600}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.won{font-family:var(--mono);font-size:.86em;color:var(--muted);white-space:nowrap}
 
-/* ── KPI figures: hairline-separated, not cards ── */
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
-  border:1px solid var(--rule);margin:0}
-@media (min-width:760px){.kpis{grid-template-columns:repeat(4,1fr)}}
-.kpi{background:var(--surface);padding:20px 18px 18px;display:flex;flex-direction:column;gap:5px}
-.kpi .k{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.kpi .v{font-size:27px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
-.kpi .u{font-size:13px;font-weight:500;color:var(--ink-2);margin-left:2px}
-.kpi .d{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
-.kpi.risk .v{color:var(--critical)}
+/* headline figures */
+.two{display:grid;grid-template-columns:1fr;gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin:26px 0 0}
+@media (min-width:640px){.two{grid-template-columns:1fr 1fr}}
+.fig{background:var(--surface);padding:26px 24px}
+.fig .lab{font-size:14px;color:var(--muted);margin:0 0 8px}
+.fig .val{font-size:clamp(34px,6vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.fig .val .u{font-size:.44em;font-weight:500;margin-left:4px;color:var(--ink-2)}
+.fig .foot{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.fig.bad .val{color:var(--critical)}
 
-/* ── chart panel ── */
-.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-  padding:20px 18px 12px;margin:6px 0 0;position:relative}
-.panel .ptitle{font-size:14.5px;font-weight:600;margin:0 0 2px}
-.panel .psub{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:0 0 14px}
+/* chart panel */
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:4px;
+  padding:26px 22px 16px;margin:26px 0 0;position:relative}
+.panel h4{font-size:17px;font-weight:600;margin:0 0 3px}
+.panel .cap{font-size:13.5px;color:var(--muted);margin:0 0 20px}
 .chart{width:100%;display:block;overflow:visible}
 .chart text{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.tick{fill:var(--muted);font-size:11px}
-.xlab{fill:var(--ink-2);font-size:12px}
-.xsub{fill:var(--muted);font-size:10px}
-.dlab{fill:var(--ink);font-size:12px;font-weight:500}
+.tick{fill:var(--muted);font-size:12px}
+.xlab{fill:var(--ink);font-size:14px;font-weight:500;font-family:var(--sans)}
+.xsub{fill:var(--muted);font-size:11px}
+.dlab{fill:var(--ink);font-size:14px;font-weight:500}
+.zero{fill:var(--critical);font-size:11.5px}
 .grid line{stroke:var(--rule);stroke-width:1}
 .base{stroke:var(--axis);stroke-width:1}
 .hit{fill:transparent;cursor:pointer}
-.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 14px;font-size:12.5px;color:var(--ink-2)}
-.legend span{display:inline-flex;align-items:center;gap:7px}
-.swatch{width:14px;height:3px;border-radius:2px;flex:none}
-.note{font-size:12px;color:var(--muted);margin:10px 0 0;padding-top:10px;max-width:none;
+.divider{stroke:var(--rule);stroke-width:1}
+.plabel{fill:var(--muted);font-size:12px}
+/* Korean chart text needs the sans; .chart text (0,1,1) outranks a bare class, so qualify it */
+.chart text.plabel,.chart text.xlab,.chart text.zero{font-family:var(--sans)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 18px;font-size:14.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.swatch{width:16px;height:3px;border-radius:2px;flex:none}
+.foot{font-size:13.5px;color:var(--muted);margin:14px 0 0;padding-top:12px;
   border-top:1px solid var(--rule)}
-.tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;
-  background:var(--tip-bg);color:var(--tip-ink);border-radius:3px;padding:8px 10px;
-  font-family:var(--mono);font-size:11.5px;line-height:1.55;white-space:nowrap;z-index:5;
-  transform:translate(-50%,-115%)}
-.tip b{font-weight:500}
 
-/* ── tables ── */
-details{margin:10px 0 0}
-summary{font-size:12.5px;color:var(--ink-2);cursor:pointer;padding:8px 0}
+/* do / don't */
+.dd{display:grid;grid-template-columns:1fr;gap:22px;margin:24px 0 0}
+@media (min-width:700px){.dd{grid-template-columns:1fr 1fr;gap:0 30px}}
+.col h3{margin-top:0}
+.col .hd{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600;
+  padding-bottom:12px;margin-bottom:6px;border-bottom:2px solid currentColor}
+.col.no .hd{color:var(--critical)}
+.col.yes .hd{color:var(--good)}
+.col ul{list-style:none;padding:0;margin:0}
+.col li{padding:14px 0;border-bottom:1px solid var(--rule);font-size:16px;line-height:1.7}
+.col li:last-child{border-bottom:none}
+.col li b{display:block;font-weight:600;margin-bottom:2px}
+.col li span{color:var(--ink-2);font-size:15px}
+.mark{font-family:var(--mono);font-size:17px}
+
+/* routes */
+.routes{display:grid;grid-template-columns:1fr;gap:14px;margin:22px 0 0}
+@media (min-width:700px){.routes{grid-template-columns:1fr 1fr}}
+.route{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:20px}
+.route .rn{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.1em}
+.route .rt{font-size:18px;font-weight:600;margin:6px 0 10px}
+.route .rv{font-family:var(--mono);font-size:14px;color:var(--ink-2);
+  padding:10px 0;margin:0 0 10px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  display:flex;justify-content:space-between;gap:12px}
+.route .rv i{font-style:normal;color:var(--muted)}
+.route p{font-size:14.5px;color:var(--ink-2);margin:0;max-width:none;line-height:1.65}
+.best{border-color:var(--good)}
+.best .rn{color:var(--good)}
+
+/* plan */
+.plan{list-style:none;padding:0;margin:24px 0 0}
+.plan li{display:grid;grid-template-columns:1fr;gap:2px 22px;padding:20px 0;
+  border-top:1px solid var(--rule)}
+@media (min-width:640px){.plan li{grid-template-columns:118px 1fr}}
+.plan .when{font-family:var(--mono);font-size:14px;color:var(--accent);padding-top:3px}
+.plan b{font-size:17px;font-weight:600;display:block;margin-bottom:3px}
+.plan span{color:var(--ink-2);font-size:15.5px;line-height:1.7}
+
+/* callout */
+.warn{border:1px solid var(--critical);border-left-width:4px;border-radius:4px;
+  background:var(--surface);padding:20px 22px;margin:26px 0 0}
+.warn .h{font-size:15px;font-weight:600;color:var(--critical);margin:0 0 6px}
+.warn p{margin:0;font-size:16px;max-width:38em}
+
+/* tables tucked away */
+details{margin:22px 0 0;border-top:1px solid var(--rule);padding-top:6px}
+summary{font-size:14.5px;color:var(--ink-2);cursor:pointer;padding:10px 0;list-style-position:outside}
 summary:hover{color:var(--ink)}
 summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.scroll{overflow-x:auto;margin:8px 0 0}
-table{border-collapse:collapse;width:100%;min-width:460px;font-size:13.5px}
-caption{text-align:left;font-size:11.5px;color:var(--muted);padding:0 0 10px}
-th,td{padding:9px 16px 9px 0;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
+.scroll{overflow-x:auto;margin:6px 0 14px}
+table{border-collapse:collapse;width:100%;min-width:480px;font-size:14.5px}
+th,td{padding:11px 18px 11px 0;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
 tr>th:last-child,tr>td:last-child{padding-right:0}
-th{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--muted)}
-td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;
-  white-space:nowrap}
-tbody tr:last-child td{border-bottom:none}
-tr.sum td{border-top:1px solid var(--ink);border-bottom:none;font-weight:600}
-.tag{font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:2px;
-  border:1px solid var(--axis);color:var(--ink-2);white-space:nowrap}
-.tag.bad{border-color:var(--critical);color:var(--critical)}
-.tag.est{border-color:var(--axis);color:var(--muted)}
-
-/* ── prescriptive blocks ── */
-ol.steps{list-style:none;padding:0;margin:0;counter-reset:s}
-ol.steps>li{counter-increment:s;padding:16px 0 16px 46px;position:relative;border-top:1px solid var(--rule)}
-ol.steps>li:first-child{border-top:none;padding-top:4px}
-ol.steps>li::before{content:counter(s);position:absolute;left:0;top:16px;
-  font-family:var(--mono);font-size:12px;color:var(--muted);
-  border:1px solid var(--axis);border-radius:50%;width:26px;height:26px;
-  display:flex;align-items:center;justify-content:center}
-ol.steps>li:first-child::before{top:4px}
-ol.steps b{display:block;font-size:15px;margin-bottom:4px}
-ul.plain{padding-left:19px;margin:0 0 12px}
-ul.plain li{margin-bottom:6px;max-width:64ch}
-ul.stop{list-style:none;padding:0;margin:0 0 12px}
-ul.stop li{position:relative;padding-left:24px;margin-bottom:9px;max-width:64ch}
-ul.stop li::before{content:"×";position:absolute;left:4px;top:-1px;color:var(--critical);
-  font-family:var(--mono);font-size:16px;font-weight:500}
-.callout{border-left:3px solid var(--critical);background:var(--surface);
-  padding:14px 16px;margin:16px 0;font-size:14px}
-.callout .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--critical);margin-bottom:5px}
-.callout p{margin:0;max-width:62ch}
-a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--wash)}
+th{font-size:12.5px;font-weight:500;color:var(--muted)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.sum td{border-top:2px solid var(--ink);border-bottom:none;font-weight:600}
+.chip{font-family:var(--mono);font-size:11.5px;padding:2px 7px;border-radius:2px;
+  border:1px solid var(--axis);color:var(--muted);white-space:nowrap}
+.chip.bad{border-color:var(--critical);color:var(--critical)}
+ul.plain{padding-left:22px;margin:0 0 14px;max-width:36em}
+ul.plain li{margin-bottom:8px}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(42,120,214,.3)}
 a:hover{border-bottom-color:var(--accent)}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-footer{padding:34px 0 0;font-size:13px;color:var(--ink-2)}
-footer .disc{border:1px solid var(--axis);border-radius:3px;padding:14px 16px;max-width:70ch;
-  background:var(--surface)}
+.tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;
+  background:var(--tip-bg);color:var(--tip-ink);border-radius:4px;padding:10px 13px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.6;white-space:nowrap;z-index:5;
+  transform:translate(-50%,-115%)}
+footer{padding:38px 0 0}
+footer .disc{border:1px solid var(--axis);border-radius:4px;background:var(--surface);
+  padding:20px 22px;font-size:15px;color:var(--ink-2);max-width:44em}
 footer .disc b{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{
+  body{background:#fff;font-size:12pt;padding:0}
+  section{page-break-inside:avoid;border-bottom:1px solid #ccc}
+  .panel,.fig,.route,.warn,footer .disc{background:#fff}
+  details{display:block}
+  details>summary{display:none}
+  .tip{display:none}
+}
 </style>
 
 <div class="wrap">
 
-<header class="masthead">
-  <p class="eyebrow">대한세무법인 · 가지급금 세무검토</p>
-  <h1>(주)츠루본 가지급금 5개년 추이</h1>
-  <p class="dek">2022년부터 2026년 8월까지 가지급금 잔액이 9.56억원 늘었고, 그 기간 인정이자는 한 번도 계상되지 않았습니다.
-  잔액과 인정이자 상당액을 연도별로 정리하고, 앞으로 자금을 어떤 경로로 꺼내 써야 하는지 정리했습니다.</p>
-  <div class="stamp">
+<header class="top">
+  <p class="co">대한세무법인 · (주)츠루본</p>
+  <h1>가지급금 5개년 추이와<br>앞으로의 자금 사용</h1>
+  <p class="sub">회사가 대표님께 빌려드린 돈(가지급금)이 5년 동안 얼마나 늘었는지,
+  그리고 그 돈에 붙는 이자(인정이자)를 지금까지 얼마나 장부에 반영하지 않았는지 정리했습니다.</p>
+  <div class="asof">
     <span>기준일 <b>2026-08-31</b></span>
-    <span>적용이자율 <b>당좌대출이자율 연 4.6%</b></span>
+    <span>이자율 <b>연 4.6%</b> (당좌대출이자율)</span>
     <span>작성 <b>2026-09-08</b></span>
-    <span>인정이자 계상 <b>2022~2025 전기간 미계상</b></span>
   </div>
 </header>
 
 <section>
-  <div class="rail"><span class="no">요약</span><span class="cite">잔액 = 각 사업연도 말<br>2026년은 8월 31일 현재</span></div>
-  <div>
-    <h2>숫자 네 개로 본 현재 상태</h2>
-    <p class="lead">가지급금은 5년째 한 번도 줄지 않았고, 증가 속도가 2024년에 한 번 크게 꺾였습니다.</p>
-    <div class="kpis">
-      <div class="kpi">
-        <span class="k">2026.8월말 잔액</span>
-        <span class="v">16.52<span class="u">억원</span></span>
-        <span class="d">1,652,442,817원</span>
-      </div>
-      <div class="kpi">
-        <span class="k">5년 증가액</span>
-        <span class="v">+9.56<span class="u">억원</span></span>
-        <span class="d">+137.3% · 2022년 대비</span>
-      </div>
-      <div class="kpi risk">
-        <span class="k">미계상 인정이자 누계</span>
-        <span class="v">1.91<span class="u">억원</span></span>
-        <span class="d">2022~2025 · 190,633,856원</span>
-      </div>
-      <div class="kpi risk">
-        <span class="k">2026년 예상 인정이자</span>
-        <span class="v">5,061<span class="u">만원</span></span>
-        <span class="d">1~8월분 · 50,605,495원</span>
-      </div>
+  <p class="step">한 눈에</p>
+  <h2>5년 동안 9.6억원 늘었고, 이자는 한 번도 반영하지 않았습니다</h2>
+  <p class="big">세법은 회사가 대표님께 <strong>이자 없이 돈을 빌려주더라도 이자를 받은 것으로 봅니다.</strong>
+  그 이자를 <em>인정이자</em>라고 하고, 회사 이익에 더해서 법인세를 다시 계산합니다.
+  받지 않은 이자는 대표님이 받아간 상여(보너스)로 처리되어 소득세도 따라옵니다.</p>
+
+  <div class="two">
+    <div class="fig">
+      <p class="lab">지금 가지급금 잔액 (2026년 8월말)</p>
+      <p class="val">16.5<span class="u">억원</span></p>
+      <p class="foot">1,652,442,817원 · 2022년보다 +137%</p>
+    </div>
+    <div class="fig bad">
+      <p class="lab">반영하지 않은 인정이자 (5년 합계)</p>
+      <p class="val">2.4<span class="u">억원</span></p>
+      <p class="foot">241,239,351원 · 2022~2026년 8월</p>
     </div>
   </div>
 </section>
 
 <section>
-  <div class="rail"><span class="no">01</span><span class="cite">가지급금 잔액 추이</span></div>
-  <div>
-    <h2>잔액은 5년 내내 한 방향</h2>
-    <p>2023년까지는 사실상 제자리(+2,235만원)였습니다. 문제는 <strong>2024년</strong>입니다. 한 해에 5.27억원, 73.3%가 늘었습니다.
-    2025년에도 2.39억원이 더해졌고, 2026년은 8개월 만에 1.68억원 — <strong>월평균 2,104만원</strong> 속도입니다.
-    이 속도가 연말까지 이어지면 2026년 말 잔액은 약 <span class="num">17.4억원</span>이 됩니다.</p>
+  <p class="step">그래프 1</p>
+  <h2>가지급금과 인정이자, 5개년</h2>
+  <p>위 그래프는 <strong>연도별 가지급금 잔액</strong>, 아래 그래프는 <strong>그 해에 발생한 인정이자</strong>입니다.
+  두 그래프는 같은 연도끼리 위아래로 맞춰져 있습니다. 아래 막대 밑의 빨간 글씨가 <strong>실제로 장부에 반영한 금액</strong>입니다 — 5년 모두 0원입니다.</p>
 
-    <div class="panel" id="p1">
-      <p class="ptitle">사업연도 말 가지급금 잔액</p>
-      <p class="psub">단위: 억원 · 2026년은 8월 31일 현재(진행 중)</p>
-      <svg class="chart" id="c1" viewBox="0 0 900 340" role="img"
-           aria-label="가지급금 잔액 추이. 2022년 6.96억원에서 2026년 8월 16.52억원으로 증가."></svg>
-      <p class="note">막대가 연한 2026년은 8개월치 진행 중 잔액입니다. 나머지는 사업연도 말 확정 잔액.</p>
-      <details>
-        <summary>표로 보기 — 연도별 잔액과 증감</summary>
-        <div class="scroll">
-          <table>
-            <caption>가지급금 잔액 및 전년 대비 증감 (단위: 원)</caption>
-            <thead><tr><th>사업연도</th><th class="n">기말 잔액</th><th class="n">증감액</th><th class="n">증감률</th><th>인정이자 계상</th></tr></thead>
-            <tbody>
-              <tr><td>2022</td><td class="n">696,214,042</td><td class="n">—</td><td class="n">—</td><td><span class="tag bad">미계상</span></td></tr>
-              <tr><td>2023</td><td class="n">718,567,284</td><td class="n">+22,353,242</td><td class="n">+3.2%</td><td><span class="tag bad">미계상</span></td></tr>
-              <tr><td>2024</td><td class="n">1,245,302,714</td><td class="n">+526,735,430</td><td class="n">+73.3%</td><td><span class="tag bad">미계상</span></td></tr>
-              <tr><td>2025</td><td class="n">1,484,130,277</td><td class="n">+238,827,563</td><td class="n">+19.2%</td><td><span class="tag bad">미계상</span></td></tr>
-              <tr><td>2026 (8월말)</td><td class="n">1,652,442,817</td><td class="n">+168,312,540</td><td class="n">+11.3%</td><td><span class="tag est">진행 중</span></td></tr>
-              <tr class="sum"><td>2022 → 2026.8</td><td class="n">—</td><td class="n">+956,228,775</td><td class="n">+137.3%</td><td></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </details>
+  <div class="panel" id="pA">
+    <h4>가지급금 잔액과 인정이자</h4>
+    <p class="cap">2026년은 8월 31일 현재 · 막대에 마우스를 올리면 정확한 금액이 나옵니다</p>
+    <svg class="chart" id="cA" viewBox="0 0 900 560" role="img"
+      aria-label="가지급금 잔액은 2022년 6.96억원에서 2026년 8월 16.52억원으로 늘었고, 같은 기간 인정이자는 매년 3,203만원에서 6,827만원까지 발생했으나 장부 반영액은 5년 모두 0원입니다."></svg>
+    <p class="foot">인정이자는 각 연도 기말 잔액 × 4.6%로 계산했습니다. 2025년 금액(68,269,990원)은 이미 산출된 값이며, 2026년은 1~8월(243일)분 예상액입니다.</p>
+    <details>
+      <summary>숫자로 보기 — 연도별 잔액 · 증감 · 인정이자</summary>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>연도</th><th class="n">가지급금 잔액</th><th class="n">전년보다</th><th class="n">인정이자</th><th class="n">장부 반영액</th></tr></thead>
+          <tbody>
+            <tr><td>2022</td><td class="n">696,214,042</td><td class="n">—</td><td class="n">32,025,846</td><td class="n">0</td></tr>
+            <tr><td>2023</td><td class="n">718,567,284</td><td class="n">+22,353,242</td><td class="n">33,054,095</td><td class="n">0</td></tr>
+            <tr><td>2024</td><td class="n">1,245,302,714</td><td class="n">+526,735,430</td><td class="n">57,283,925</td><td class="n">0</td></tr>
+            <tr><td>2025</td><td class="n">1,484,130,277</td><td class="n">+238,827,563</td><td class="n">68,269,990</td><td class="n">0</td></tr>
+            <tr><td>2026 (8월)</td><td class="n">1,652,442,817</td><td class="n">+168,312,540</td><td class="n">50,605,495</td><td class="n">0</td></tr>
+            <tr class="sum"><td>합계 · 증가</td><td class="n">—</td><td class="n">+956,228,775</td><td class="n">241,239,351</td><td class="n">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:14.5px;color:var(--muted);max-width:40em">2026년 한 해 전체로는 인정이자가 <strong>7,400만~7,600만원</strong>이 될 것으로 봅니다.
+      실제 신고 때는 하루하루 잔액을 합산하는 방식(적수 방식)으로 확정합니다.</p>
+    </details>
+  </div>
+
+  <h3>그래프에서 꼭 보셔야 할 두 가지</h3>
+  <ul class="plain">
+    <li><strong>2024년에 한 해 5.3억원이 늘었습니다.</strong> 2023년까지는 사실상 제자리였는데(+2,235만원) 2024년에만 73% 급증했습니다. 이 돈이 어디로 나갔는지 계정 확인이 가장 먼저입니다.</li>
+    <li><strong>지금도 매달 2,100만원씩 늘고 있습니다.</strong> 2026년 8개월 동안 1.68억원이 늘었습니다. 이 속도면 연말 잔액은 약 17.4억원입니다.</li>
+  </ul>
+</section>
+
+<section>
+  <p class="step">이대로 두면</p>
+  <h2>세금이 두 번, 그리고 마지막에 한 번 더</h2>
+  <p class="big">인정이자를 반영하지 않으면 <strong>회사는 법인세를, 대표님은 소득세를</strong> 각각 더 내게 됩니다.
+  더 큰 문제는 마지막에 있습니다.</p>
+
+  <div class="two" style="margin-top:22px">
+    <div class="fig bad">
+      <p class="lab">지금까지 미반영분(1.9억)에 붙는 세금</p>
+      <p class="val">1.2<span class="u">억원</span></p>
+      <p class="foot">법인세 약 3,984만 + 대표님 소득세 약 7,968만</p>
     </div>
+    <div class="fig bad">
+      <p class="lab">대표님 퇴임·지분양도 시점에 한 번에</p>
+      <p class="val">8.2<span class="u">억원</span></p>
+      <p class="foot">잔액 16.5억 전액이 상여 처리될 경우 소득세</p>
+    </div>
+  </div>
+
+  <div class="warn">
+    <p class="h">가장 큰 위험은 매년의 이자가 아닙니다</p>
+    <p>대표님 퇴임, 지분 양도, 폐업, 상속 등으로 회사와의 특수관계가 끊어질 때
+    <strong>그때까지 갚지 않은 가지급금 전액이 대표님 상여로 처리</strong>됩니다.
+    승계나 지분 이동을 생각하고 계신다면, 그 일정보다 먼저 잔액을 줄여 두셔야 합니다.</p>
+  </div>
+
+  <p style="margin-top:26px">그밖에 ① 회사에 차입금이 있으면 그 이자 중 일부를 비용으로 인정받지 못하고,
+  ② 이 돈은 못 받게 되어도 손실(대손) 처리가 되지 않습니다.
+  ③ 세무서가 다시 볼 수 있는 기간(제척기간)이 원칙적으로 5년이므로 <strong>2022년분부터 아직 모두 대상</strong>입니다.</p>
+</section>
+
+<section>
+  <p class="step">앞으로</p>
+  <h2>경비를 어떻게 써야 하는가</h2>
+  <p class="big">가지급금은 <em>쓴 돈이 아니라 설명하지 못한 돈</em>입니다.
+  회사 돈이 나갔는데 증빙이 없으면 회계는 그것을 "대표님이 빌려간 것"으로 처리할 수밖에 없습니다.
+  그래서 앞으로 할 일은 두 가지입니다 — <strong>더 만들지 않기</strong>, 그리고 <strong>정당한 경로로 꺼내기</strong>.</p>
+
+  <div class="dd">
+    <div class="col no">
+      <p class="hd"><span class="mark">✕</span> 이건 멈춰주세요</p>
+      <ul>
+        <li><b>증빙 없이 회사 돈을 꺼내는 것</b><span>지금 매달 2,100만원이 늘어나는 경로가 대부분 여기입니다.</span></li>
+        <li><b>개인 지출을 회사 카드·통장으로 결제</b><span>생활비, 개인 명의 자산 관련 비용은 나가는 순간 가지급금이 됩니다.</span></li>
+        <li><b>회사 돈을 개인 통장으로 먼저 옮기기</b><span>목적이 정당해도 개인 통장을 거치면 업무용임을 증명하기 어렵습니다.</span></li>
+        <li><b>3만원 넘는 지출에서 증빙 안 받기</b><span>세금계산서·계산서·카드·현금영수증 중 하나는 꼭 받아주세요. 없으면 가산세 2%가 별도로 붙습니다.</span></li>
+      </ul>
+    </div>
+    <div class="col yes">
+      <p class="hd"><span class="mark">✓</span> 이렇게 해주세요</p>
+      <ul>
+        <li><b>모든 경비는 법인카드 또는 계좌이체로</b><span>현금을 쓸 수밖에 없다면 회사 사업자번호로 현금영수증을 받아주세요.</span></li>
+        <li><b>결제할 때 목적을 한 줄 남기기</b><span>접대비·차량비·복리후생비는 나중에 설명하기 가장 어려운 항목입니다.</span></li>
+        <li><b>필요한 생활자금은 급여에 미리 반영</b><span>매달 필요한 금액을 급여로 정해두면 중간에 빼서 쓸 이유가 없어집니다. 가장 확실한 방법입니다.</span></li>
+        <li><b>매달 마감 때 가지급금 잔액 확인</b><span>목표는 <strong>월 증가액 0원</strong>입니다. 이것만 지켜도 잔액이 더 늘지 않습니다.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>대표님이 회사 돈을 정당하게 가져가는 방법은 네 가지입니다</h3>
+  <p>가지급금을 만들지 않고 자금을 쓰는 길은 아래 네 가지뿐입니다.
+  세금 부담이 각각 달라서 <strong>한 가지에 몰지 않고 나눠서</strong> 쓰는 것이 좋습니다.
+  아래는 <strong>실제로 손에 3억원</strong>을 쥐려면 회사에서 얼마가 나가야 하는지 비교한 것입니다.</p>
+
+  <div class="routes">
+    <div class="route">
+      <p class="rn">방법 1</p>
+      <p class="rt">급여·상여를 올린다</p>
+      <p class="rv"><span>회사에서 5.0억</span><i>세금 2.0억</i></p>
+      <p>회사 비용으로 인정되어 법인세가 약 1억원 줄어듭니다. 정관·급여규정과 이사회 결의가 필요하고, 규정을 넘는 상여는 비용으로 인정되지 않습니다.</p>
+    </div>
+    <div class="route">
+      <p class="rn">방법 2</p>
+      <p class="rt">배당을 받는다</p>
+      <p class="rv"><span>회사에서 4.6억</span><i>세금 1.6억</i></p>
+      <p>이익잉여금이 있어야 하고, 지분율대로 나가야 합니다. 회사 비용으로는 인정되지 않습니다. 금융소득이 연 2천만원을 넘으면 종합과세됩니다.</p>
+    </div>
+    <div class="route best">
+      <p class="rn">방법 3 · 세금 가장 적음</p>
+      <p class="rt">퇴직금으로 정리한다</p>
+      <p class="rv"><span>회사에서 3.5억</span><i>세금 0.5억</i></p>
+      <p>세금이 가장 적지만 <strong>실제로 퇴직해야</strong> 합니다. 정관과 퇴직급여규정에 근거가 있어야 하고, 한도를 넘으면 급여로 봅니다. 승계 시점에 남은 잔액을 정리하는 카드입니다.</p>
+    </div>
+    <div class="route">
+      <p class="rn">방법 4</p>
+      <p class="rt">임차료·이자를 받는다</p>
+      <p class="rv"><span>회사에서 4.3억</span><i>세금 1.3억</i></p>
+      <p>대표님 개인 부동산을 회사가 실제로 쓰거나, 개인 자금을 회사에 빌려준 경우입니다. 시세보다 많이 받으면 인정되지 않습니다.</p>
+    </div>
+  </div>
+  <p style="font-size:14.5px;color:var(--muted);margin-top:18px">세금은 가정한 실효세율로 계산한 참고치입니다. 실제 세액은 소득 규모와 지분 구조에 따라 달라집니다.
+  현실적으로는 <strong>급여 인상 + 배당 + 임차료를 함께</strong> 쓰고, 승계 시점에 퇴직금을 쓰는 조합을 권합니다.</p>
+</section>
+
+<section>
+  <p class="step">그래프 2</p>
+  <h2>지금 결정에 따라 5년 뒤가 이렇게 달라집니다</h2>
+  <p>세 가지 길이 있습니다. 그냥 두면 5년 뒤 잔액은 27.5억원이 되고,
+  더 늘리지만 않으면 16.5억원에서 멈추고, <strong>매년 3억원씩 갚으면 4.5억원</strong>까지 내려옵니다.</p>
+
+  <div class="panel" id="pB">
+    <h4>가지급금 잔액 전망 (2026~2030년)</h4>
+    <p class="cap">각 연도 말 기준 · 선에 마우스를 올리면 해당 연도 금액이 나옵니다</p>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--accent)"></i>그냥 두면</span>
+      <span><i class="swatch" style="background:var(--s2)"></i>더 늘리지 않으면</span>
+      <span><i class="swatch" style="background:var(--s3)"></i>매년 3억씩 갚으면</span>
+    </div>
+    <svg class="chart" id="cB" viewBox="0 0 900 380" role="img"
+      aria-label="2030년 가지급금 잔액 전망. 그냥 두면 27.5억원, 더 늘리지 않으면 16.5억원, 매년 3억씩 갚으면 4.5억원."></svg>
+    <p class="foot">5년간 인정이자 합계는 순서대로 4.9억원 / 3.8억원 / 2.7억원입니다. 갚기 시작하면 <strong>5년간 세금 기준 2.2억원</strong>을 아낍니다.</p>
+    <details>
+      <summary>숫자로 보기 — 시나리오별 잔액과 인정이자</summary>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>연도</th><th class="n">그냥 두면</th><th class="n">더 늘리지 않으면</th><th class="n">매년 3억씩 갚으면</th></tr></thead>
+          <tbody>
+            <tr><td>2026</td><td class="n">1,736,599,087</td><td class="n">1,652,442,817</td><td class="n">1,652,442,817</td></tr>
+            <tr><td>2027</td><td class="n">1,989,067,897</td><td class="n">1,652,442,817</td><td class="n">1,352,442,817</td></tr>
+            <tr><td>2028</td><td class="n">2,241,536,707</td><td class="n">1,652,442,817</td><td class="n">1,052,442,817</td></tr>
+            <tr><td>2029</td><td class="n">2,494,005,517</td><td class="n">1,652,442,817</td><td class="n">752,442,817</td></tr>
+            <tr><td>2030</td><td class="n">2,746,474,327</td><td class="n">1,652,442,817</td><td class="n">452,442,817</td></tr>
+            <tr class="sum"><td>5년 인정이자 합계</td><td class="n">486,519,529</td><td class="n">376,190,659</td><td class="n">265,790,659</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:14.5px;color:var(--muted)">인정이자는 기초·기말 평균잔액 × 4.6%로 계산한 추정치입니다.</p>
+    </details>
   </div>
 </section>
 
 <section>
-  <div class="rail"><span class="no">02</span>
-    <span class="cite">법인세법 제52조<br>같은 법 시행령 제88조①6<br>제89조③⑤<br>시행규칙 제43조②</span></div>
-  <div>
-    <h2>계상하지 않은 인정이자 2.41억원</h2>
-    <p>특수관계인에게 무이자로 돈을 빌려주면 세법은 이자를 받은 것으로 보아 익금에 산입합니다.
-    이자율은 원칙적으로 가중평균차입이자율이지만, <strong>당좌대출이자율 연 4.6%</strong>를 선택할 수 있습니다
-    (선택하면 그 사업연도와 이후 2개 사업연도까지 계속 적용).
-    2025년 산출액 68,269,990원이 <span class="num">1,484,130,277 × 4.6%</span>와 일치하므로, 아래 계산도 같은 방식(기말 잔액 × 4.6%)으로 맞췄습니다.</p>
+  <p class="step">계획</p>
+  <h2>언제 무엇을 하면 되는가</h2>
+  <ul class="plan">
+    <li><span class="when">2026년<br>9~12월</span>
+      <span><b>새로 늘어나는 것부터 막습니다</b>
+      2024~2026년에 늘어난 원인을 계정별로 확인하고, 위의 "이건 멈춰주세요" 네 가지를 바로 적용합니다.
+      2026년 인정이자(약 7,400만원)는 이번 결산에 반영합니다.</span></li>
+    <li><span class="when">2027년~</span>
+      <span><b>매년 3억원씩 갚습니다</b>
+      재원은 급여 인상·배당·임차료를 나눠서 마련합니다. 인정이자는 매년 장부에 반영하고 <strong>실제로 회사에 입금</strong>해야 합니다.
+      반영만 하고 받지 않으면 그 이자도 나중에 상여로 처리됩니다.</span></li>
+    <li><span class="when">2030년</span>
+      <span><b>잔액 4.5억원</b>
+      대표님 퇴직 시점에 퇴직금과 상계하면 정리할 수 있는 규모까지 내려옵니다.</span></li>
+  </ul>
+  <p style="margin-top:24px">연 3억원이 부담되시면 <strong>연 1.5억원씩 10년</strong>도 괜찮습니다.
+  금액보다 중요한 것은 <em>잔액이 줄어드는 방향으로 돌아섰다는 기록</em>입니다.
+  이것이 나중에 세무조사에서 "받을 의지가 있었다"는 근거가 됩니다. 상환 약정서와 이자 입금 내역을 문서로 남겨주세요.</p>
+</section>
 
-    <div class="panel" id="p2">
-      <p class="ptitle">연도별 인정이자 상당액</p>
-      <p class="psub">단위: 만원 · 당좌대출이자율 4.6% 적용</p>
-      <svg class="chart" id="c2" viewBox="0 0 900 300" role="img"
-           aria-label="연도별 인정이자 상당액. 2022년 3,203만원에서 2025년 6,827만원, 2026년 1~8월 5,061만원."></svg>
-      <p class="note">2022~2024년은 기말 잔액 × 4.6% 추정액, 2025년은 산출된 68,269,990원, 2026년은 1~8월(243일)분 예상액.</p>
-      <details>
-        <summary>표로 보기 — 인정이자 상당액과 누계</summary>
-        <div class="scroll">
-          <table>
-            <caption>인정이자 상당액 (기말 잔액 × 4.6%, 단위: 원)</caption>
-            <thead><tr><th>사업연도</th><th class="n">기준 잔액</th><th class="n">인정이자 상당액</th><th>구분</th></tr></thead>
-            <tbody>
-              <tr><td>2022</td><td class="n">696,214,042</td><td class="n">32,025,846</td><td><span class="tag est">추정</span></td></tr>
-              <tr><td>2023</td><td class="n">718,567,284</td><td class="n">33,054,095</td><td><span class="tag est">추정</span></td></tr>
-              <tr><td>2024</td><td class="n">1,245,302,714</td><td class="n">57,283,925</td><td><span class="tag est">추정</span></td></tr>
-              <tr><td>2025</td><td class="n">1,484,130,277</td><td class="n">68,269,990</td><td><span class="tag bad">산출·미계상</span></td></tr>
-              <tr><td>2026 (1~8월)</td><td class="n">1,652,442,817</td><td class="n">50,605,495</td><td><span class="tag est">예상</span></td></tr>
-              <tr class="sum"><td>누계</td><td class="n">—</td><td class="n">241,239,351</td><td></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </details>
-    </div>
-
-    <h3>2026년 예상 인정이자 — 네 가지 계산</h3>
-    <p>기간을 어디까지 보느냐, 잔액을 어떻게 잡느냐에 따라 달라집니다. 신고 시에는 <strong>가지급금 적수 방식</strong>(일별 잔액 합계 × 4.6% ÷ 365)으로 확정해야 합니다.</p>
+<section>
+  <p class="step">참고</p>
+  <h2>근거 법령과 확인이 필요한 부분</h2>
+  <details open>
+    <summary>인용한 법령 조항</summary>
     <div class="scroll">
       <table>
-        <caption>2026년 인정이자 계산안 (단위: 원)</caption>
-        <thead><tr><th>계산 기준</th><th class="n">기준 잔액</th><th class="n">기간</th><th class="n">인정이자</th></tr></thead>
+        <thead><tr><th>내용</th><th>조항</th></tr></thead>
         <tbody>
-          <tr><td>8월말 잔액 유지 · 1/1~8/31</td><td class="n">1,652,442,817</td><td class="n">243일</td><td class="n">50,605,495</td></tr>
-          <tr><td>기초·8월말 평균잔액 · 1/1~8/31</td><td class="n">1,568,286,547</td><td class="n">243일</td><td class="n">48,028,238</td></tr>
-          <tr><td>8월말 잔액 유지 · 사업연도 전체</td><td class="n">1,652,442,817</td><td class="n">365일</td><td class="n">76,012,370</td></tr>
-          <tr><td>현 추세 유지 · 연평균잔액 기준</td><td class="n">1,610,364,682</td><td class="n">365일</td><td class="n">74,076,775</td></tr>
+          <tr><td>이자 없이 빌려준 돈에 이자를 계산하는 근거</td><td>법인세법 제52조, 같은 법 시행령 제88조 제1항 제6호</td></tr>
+          <tr><td>적용 이자율 (가중평균차입이자율 또는 당좌대출이자율)</td><td>법인세법 시행령 제89조 제3항·제5항</td></tr>
+          <tr><td>당좌대출이자율 연 4.6%</td><td>법인세법 시행규칙 제43조 제2항</td></tr>
+          <tr><td>차입금 이자를 비용으로 인정하지 않는 근거</td><td>법인세법 제28조 제1항 제4호 나목, 같은 법 시행령 제53조</td></tr>
+          <tr><td>대표님 상여로 처리하는 근거</td><td>법인세법 시행령 제106조 제1항 제1호</td></tr>
+          <tr><td>임원 상여금의 비용 인정 한도</td><td>법인세법 시행령 제43조 제2항</td></tr>
+          <tr><td>증빙 미수취 가산세 2%</td><td>법인세법 제75조의5</td></tr>
+          <tr><td>세무서가 다시 볼 수 있는 기간 (원칙 5년)</td><td>국세기본법 제26조의2 제1항</td></tr>
+          <tr><td>못 받아도 손실 처리가 안 되는 근거</td><td>법인세법 시행령 제19조의2, 제61조 <span class="chip bad">호 번호 확인 필요</span></td></tr>
+          <tr><td>특수관계가 끊어질 때 전액 상여로 보는 근거</td><td>법인세법 시행령 제11조 <span class="chip bad">호 번호 확인 필요</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="note" style="border-top:none;padding-top:14px">실무 권고 — 2026년 3월 법인세 신고 시 <strong>7,400만~7,600만원</strong> 수준을 예상하고 준비하시되, 9월 이후 잔액이 더 늘면 그만큼 올라갑니다.</p>
-  </div>
-</section>
+  </details>
 
-<section>
-  <div class="rail"><span class="no">03</span>
-    <span class="cite">법인세법 제28조①4나<br>같은 법 시행령 제53조<br>제106조①1<br>국세기본법 제26조의2</span></div>
-  <div>
-    <h2>그대로 두면 어디로 튀는가</h2>
-    <p>미계상 인정이자는 단순히 "이자를 안 받은 것"으로 끝나지 않습니다. 법인세와 대표자 소득세로 두 번 과세되고, 특수관계가 끊어지는 순간 잔액 전액이 상여로 처분됩니다.</p>
+  <h3>확인 한계</h3>
+  <p>이 자료를 작성한 환경에서 <a href="https://www.law.go.kr">국가법령정보센터</a>와
+  <a href="https://taxlaw.nts.go.kr">국세법령정보시스템</a>에 직접 접속하지 못했습니다(네트워크 차단).
+  위 조항 번호는 검색 결과를 근거로 정리한 것이므로 <strong>시행일자와 최근 개정 여부, 표시한 두 건의 호 번호는 원문에서 대조해야 합니다.</strong>
+  예규·해석례 문서번호는 확인하지 못해 기재하지 않았습니다.</p>
 
-    <ol class="steps">
-      <li><b>인정이자 익금산입 → 법인세 추징</b>
-        누계 190,633,856원(2022~2025)을 익금산입하면 과세표준 2억원 초과 구간(19% + 지방소득세 1.9%) 기준
-        약 <span class="num">3,984만원</span>의 법인세가 추가됩니다. 여기에 과소신고·납부지연 가산세가 붙습니다.</li>
-      <li><b>같은 금액이 대표자 상여로 처분 → 소득세</b>
-        회수하지 않은 인정이자는 귀속자인 대표자에게 상여로 소득처분됩니다(법인세법 시행령 제106조 제1항 제1호).
-        종합소득 실효세율 38%+지방 3.8% 가정 시 약 <span class="num">7,968만원</span>.
-        <strong>법인세와 합치면 약 1.2억원</strong>이며, 4대보험 정산까지 따라옵니다.</li>
-      <li><b>차입금이 있으면 지급이자도 손금부인</b>
-        업무무관 가지급금에 상당하는 차입금 이자는 손금에 산입하지 않습니다(법인세법 제28조 제1항 제4호 나목, 시행령 제53조).
-        현재 차입금 명세를 받지 못해 금액은 계산하지 못했습니다 — <strong>차입금 잔액·이자율 자료가 필요합니다.</strong></li>
-      <li><b>회수 못 해도 대손처리 불가</b>
-        업무무관 가지급금은 대손금 손금산입 대상에서 제외되고 대손충당금 설정대상 채권에도 들어가지 않습니다.
-        받지 못하면 그냥 손실이 아니라 "세금은 낸 손실"이 됩니다.</li>
-      <li><b>특수관계 소멸 시 잔액 전액 상여</b>
-        대표자 퇴임, 지분 양도, 폐업, 상속 등으로 특수관계가 소멸할 때까지 회수하지 않은 가지급금은 전액 익금산입·상여 처분됩니다.
-        현재 잔액 16.52억원이 한 해에 상여로 잡히면 최고세율(45%+지방 4.5%) 구간에서 소득세만 약 <span class="num">8.2억원</span>입니다.</li>
-      <li><b>제척기간이 아직 열려 있습니다</b>
-        법인세 부과제척기간은 원칙적으로 신고기한 다음 날부터 5년(국세기본법 제26조의2)입니다.
-        2022 사업연도분(2023년 3월 신고)은 <strong>2028년 3월까지</strong> 경정 대상 — 즉 2022년부터 2025년까지 <strong>4개 연도 전부가 아직 사정권</strong>입니다.</li>
-    </ol>
-
-    <div class="callout">
-      <p class="h">가장 큰 단일 리스크</p>
-      <p>매년의 인정이자(연 7천만원대)보다, <strong>특수관계 소멸 시점의 16.52억원 일괄 상여 처분</strong>이 압도적으로 큽니다.
-      대표자 승계·지분이동·가업승계를 계획하고 있다면 그 일정보다 먼저 잔액을 줄여야 합니다.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="rail"><span class="no">04</span><span class="cite">향후 5년 시나리오<br>2026~2030</span></div>
-  <div>
-    <h2>지금 결정이 5년 뒤 2.2억원을 가릅니다</h2>
-    <p>세 갈래입니다. 현 추세대로 두면 2030년 잔액은 27.5억원, 신규 발생만 끊으면 16.5억원에서 멈추고,
-    연 3억원씩 갚으면 4.5억원까지 내려옵니다. 5년간 인정이자 누계는 <strong>4.87억원 대 2.66억원</strong> — 차이가 2.21억원입니다.</p>
-
-    <div class="panel" id="p3">
-      <p class="ptitle">가지급금 잔액 전망</p>
-      <p class="psub">단위: 억원 · 각 사업연도 말 기준</p>
-      <div class="legend">
-        <span><i class="swatch" style="background:var(--accent)"></i>① 현 추세 유지 (연 +2.52억)</span>
-        <span><i class="swatch" style="background:var(--s2)"></i>② 9월부터 신규 발생 중단</span>
-        <span><i class="swatch" style="background:var(--s3)"></i>③ 중단 + 연 3억 상환</span>
-      </div>
-      <svg class="chart" id="c3" viewBox="0 0 900 360" role="img"
-           aria-label="2026~2030년 가지급금 잔액 전망 세 시나리오. 현 추세 유지 27.5억원, 신규 중단 16.5억원, 연 3억 상환 4.5억원."></svg>
-      <p class="note">인정이자는 기초·기말 평균잔액 × 4.6%로 계산한 추정치입니다. 실제 신고는 적수 방식으로 확정합니다.</p>
-      <details>
-        <summary>표로 보기 — 시나리오별 잔액과 인정이자</summary>
-        <div class="scroll">
-          <table>
-            <caption>시나리오별 기말 잔액 / 해당 연도 인정이자 (단위: 원)</caption>
-            <thead><tr><th>사업연도</th><th class="n">① 현 추세</th><th class="n">② 신규 중단</th><th class="n">③ 중단+연 3억 상환</th></tr></thead>
-            <tbody>
-              <tr><td>2026</td><td class="n">1,736,599,087<br>74,076,775</td><td class="n">1,652,442,817<br>72,141,181</td><td class="n">1,652,442,817<br>72,141,181</td></tr>
-              <tr><td>2027</td><td class="n">1,989,067,897<br>85,690,341</td><td class="n">1,652,442,817<br>76,012,370</td><td class="n">1,352,442,817<br>69,112,370</td></tr>
-              <tr><td>2028</td><td class="n">2,241,536,707<br>97,303,906</td><td class="n">1,652,442,817<br>76,012,370</td><td class="n">1,052,442,817<br>55,312,370</td></tr>
-              <tr><td>2029</td><td class="n">2,494,005,517<br>108,917,471</td><td class="n">1,652,442,817<br>76,012,370</td><td class="n">752,442,817<br>41,512,370</td></tr>
-              <tr><td>2030</td><td class="n">2,746,474,327<br>120,531,036</td><td class="n">1,652,442,817<br>76,012,370</td><td class="n">452,442,817<br>27,712,370</td></tr>
-              <tr class="sum"><td>5년 인정이자 누계</td><td class="n">486,519,529</td><td class="n">376,190,659</td><td class="n">265,790,659</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </details>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="rail"><span class="no">05</span>
-    <span class="cite">앞으로의 경비 집행<br>법인세법 시행령 제43조②<br>법인세법 제75조의5</span></div>
-  <div>
-    <h2>앞으로 경비를 어떻게 써야 하는가</h2>
-    <p class="lead">가지급금은 "쓴 돈"이 아니라 "설명하지 못한 돈"입니다. 2024년의 5.27억원 증가가 어디서 왔는지 계정 내역을 확인해야 하지만,
-    구조적으로는 아래 세 가지가 동시에 필요합니다 — <strong>새로 만들지 않기 · 정당한 경로로 꺼내기 · 있는 잔액 갚기</strong>.</p>
-
-    <h3>지금 멈춰야 할 것</h3>
-    <ul class="stop">
-      <li><strong>증빙 없는 인출을 가지급금으로 떨어뜨리는 처리.</strong> 월 2,104만원씩 쌓이고 있는 경로가 여기일 가능성이 가장 큽니다. 매월 마감 때 가지급금 증가분의 발생 원인을 한 줄씩 남기세요.</li>
-      <li><strong>대표자 개인 지출을 법인 자금으로 결제하는 것.</strong> 개인 카드 사용액, 생활비, 개인 명의 자산 관련 비용은 법인 통장에서 나가면 그 순간 가지급금입니다.</li>
-      <li><strong>법인 자금을 대표자 개인계좌로 먼저 옮기는 것.</strong> 목적이 정당해도 개인계좌를 경유하면 업무관련성 입증이 어려워집니다. 법인 지출은 법인카드·법인계좌 이체로 단일화하세요.</li>
-      <li><strong>3만원 초과 지출에서 적격증빙(세금계산서·계산서·신용카드·현금영수증)을 받지 않는 것.</strong> 증빙불비가산세 2%가 별도로 붙고, 결국 가지급금으로 남습니다.</li>
-    </ul>
-
-    <h3>대표자가 자금을 꺼내는 정당한 경로 네 가지</h3>
-    <p>가지급금을 만들지 않으면서 돈을 쓰는 방법은 네 가지뿐입니다. 각각 세부담과 요건이 다르므로 <strong>한 가지에 몰지 말고 조합</strong>해야 합니다.</p>
-    <div class="scroll">
-      <table>
-        <caption>순현금 3억원을 확보할 때 경로별 부담 비교 (실효세율은 가정치, 단위: 원)</caption>
-        <thead><tr><th>경로</th><th class="n">필요 세전 재원</th><th class="n">개인 세부담</th><th>법인 손금</th><th>필수 요건</th></tr></thead>
-        <tbody>
-          <tr><td>급여·상여 인상</td><td class="n">500,000,000</td><td class="n">200,000,000</td><td>인정 (법인세 약 1.05억 절감)</td><td>정관·급여지급규정 및 이사회 결의. 규정 초과 상여는 손금불산입(시행령 제43조 제2항)</td></tr>
-          <tr><td>배당</td><td class="n">461,538,462</td><td class="n">161,538,462</td><td>불인정 (세후재원)</td><td>배당가능 이익잉여금 필요, 지분율대로 지급, 금융소득 2천만원 초과 시 종합과세</td></tr>
-          <tr><td>임원 퇴직금</td><td class="n">352,941,176</td><td class="n">52,941,176</td><td>규정 범위 내 인정</td><td>실제 퇴직 필요. 정관·퇴직급여지급규정 근거, 한도 초과분은 근로소득</td></tr>
-          <tr><td>부동산 임차료 · 차입이자</td><td class="n">428,571,429</td><td class="n">128,571,429</td><td>인정</td><td>법인이 실제 사용·차입한 사실과 시가 상당액. 과대 계상은 부당행위계산부인 대상</td></tr>
-          <tr><td>개인자산 양도대금으로 상환</td><td class="n">300,000,000</td><td class="n">양도소득세 별도</td><td>—</td><td>시가 감정 필수. 저가·고가 거래는 부인 대상</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="note" style="border-top:none;padding-top:14px">세부담이 가장 낮은 경로는 퇴직금이지만 실제 퇴직이 전제입니다. 실무적으로는 <strong>급여 인상 + 배당 + 임차료</strong>를 병행하고, 승계 시점에 퇴직금을 쓰는 조합이 현실적입니다.</p>
-
-    <h3>경비 집행 4원칙 — 내일부터 적용</h3>
-    <ol class="steps">
-      <li><b>법인카드 우선, 현금 지출 금지</b>
-        모든 경비는 법인카드 또는 계좌이체로. 부득이한 현금 지출은 지출결의서 + 현금영수증(법인 사업자번호)으로 즉시 증빙합니다.</li>
-      <li><b>업무관련성을 지출 시점에 한 줄로 남기기</b>
-        접대비·복리후생비·차량유지비는 사후에 설명하기 가장 어려운 계정입니다. 결제 즉시 상대방·목적을 메모하세요.</li>
-      <li><b>대표자 자금 소요는 월 정액 급여로 선반영</b>
-        필요한 생활자금 규모를 급여에 반영해 두면 중간에 빼 쓸 이유가 없어집니다. 이것이 가지급금 신규 발생을 막는 가장 확실한 조치입니다.</li>
-      <li><b>매월 마감 시 가지급금 계정 확인</b>
-        월 단위로 잔액과 증감을 확인해 원인을 정리합니다. 목표는 <strong>월 증가액 0원</strong>이며, 이것만 지켜도 시나리오 ②로 진입합니다.</li>
-    </ol>
-
-    <h3>상환 로드맵</h3>
-    <ul class="plain">
-      <li><strong>2026년 9~12월</strong> — 신규 발생 차단. 2024~2026년 증가분의 발생 원인 계정별 확인. 2026년 인정이자(약 7,400만원) 세무조정 반영 및 미수이자 계상·회수.</li>
-      <li><strong>2027년~</strong> — 연 3억원 상환 개시. 재원은 급여 인상·배당·임차료 조합. 인정이자는 매년 계상하고 <strong>실제로 회수</strong>해야 합니다(계상만 하고 미수로 두면 그 미수이자도 특수관계 소멸 시 상여 처분 대상).</li>
-      <li><strong>2030년</strong> — 잔액 4.52억원. 대표자 퇴직 시점에 퇴직금과 상계하면 잔액 정리가 가능한 규모로 내려옵니다.</li>
-    </ul>
-    <p>연 3억원이 부담스러우면 <strong>연 1.5억원 · 10년</strong>도 유효합니다. 중요한 것은 금액보다 <strong>잔액이 줄어드는 방향으로 돌아섰다는 기록</strong>이며, 이는 세무조사 시 회수 의지를 입증하는 근거가 됩니다. 상환 약정서·이자 지급 내역을 문서로 남기세요.</p>
-  </div>
-</section>
-
-<section>
-  <div class="rail"><span class="no">06</span><span class="cite">근거 법령</span></div>
-  <div>
-    <h2>근거 법령</h2>
-    <div class="scroll">
-      <table>
-        <caption>인용 법령 — 조문 원문은 국가법령정보센터에서 시행일과 함께 확인 필요</caption>
-        <thead><tr><th>내용</th><th>조항</th><th>확인 상태</th></tr></thead>
-        <tbody>
-          <tr><td>부당행위계산의 부인</td><td>법인세법 제52조</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>특수관계인에 대한 금전의 무상·저율 대여</td><td>법인세법 시행령 제88조 제1항 제6호</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>시가 — 가중평균차입이자율 원칙, 당좌대출이자율 선택 및 익금산입</td><td>법인세법 시행령 제89조 제3항·제5항</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>당좌대출이자율 연 1,000분의 46 (4.6%)</td><td>법인세법 시행규칙 제43조 제2항</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>업무무관 가지급금 관련 지급이자 손금불산입</td><td>법인세법 제28조 제1항 제4호 나목, 같은 법 시행령 제53조</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>익금산입액의 소득처분 — 귀속자가 임원인 경우 상여</td><td>법인세법 시행령 제106조 제1항 제1호</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>임원 상여금의 손금불산입 (급여지급기준 초과분)</td><td>법인세법 시행령 제43조 제2항</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>적격증빙 미수취 가산세 2%</td><td>법인세법 제75조의5</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>국세 부과제척기간 (원칙 5년)</td><td>국세기본법 제26조의2 제1항</td><td><span class="tag est">원문 대조 필요</span></td></tr>
-          <tr><td>업무무관 가지급금의 대손금 손금불산입 및 대손충당금 설정대상 제외</td><td>법인세법 시행령 제19조의2, 제61조 — 호 번호 미확인</td><td><span class="tag bad">호 번호 확인 필요</span></td></tr>
-          <tr><td>특수관계 소멸 시까지 회수하지 않은 가지급금·미수이자의 익금산입</td><td>법인세법 시행령 제11조 — 호 번호 미확인</td><td><span class="tag bad">호 번호 확인 필요</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="margin-top:18px"><strong>확인 한계.</strong> 이 리포트를 작성한 환경에서 <a href="https://www.law.go.kr">국가법령정보센터</a>와
-    <a href="https://taxlaw.nts.go.kr">국세법령정보시스템</a>에 직접 접속하지 못했습니다(네트워크 차단).
-    위 조항 번호는 검색 결과를 근거로 정리한 것이며, <strong>시행일자와 최근 개정 여부, 표시한 두 건의 호 번호는 원문에서 반드시 대조해야 합니다.</strong>
-    인용할 예규·해석례 문서번호는 확인하지 못해 기재하지 않았습니다.</p>
-    <p><strong>추가로 필요한 자료.</strong> ① 차입금 잔액·이자율 명세(지급이자 손금불산입 계산) ② 2024·2025년 가지급금 계정 월별 증감 내역(발생 원인 파악)
-    ③ 가중평균차입이자율 산정 자료(4.6% 대신 적용 시 유리한지 비교) ④ 정관 및 임원 급여·퇴직급여 지급규정 ⑤ 최근 3년 이익잉여금 및 지분 구조(배당 가능성 검토).</p>
-  </div>
+  <h3>회사에서 주셔야 할 자료</h3>
+  <ul class="plain">
+    <li>차입금 잔액과 이자율 명세 — 비용으로 인정받지 못하는 이자를 계산하려면 필요합니다(현재 계산 못 한 항목입니다).</li>
+    <li>2024·2025년 가지급금 월별 증감 내역 — 늘어난 원인을 찾아야 합니다.</li>
+    <li>정관, 임원 급여규정, 퇴직급여규정 — 급여 인상과 퇴직금 가능 범위를 확인합니다.</li>
+    <li>최근 3년 이익잉여금과 지분 구조 — 배당 가능 여부를 확인합니다.</li>
+  </ul>
 </section>
 
 <footer>
   <div class="disc">
-    <p><b>본 답변은 참고용이며, 실제 업무 적용 전 반드시 담당 세무사의 최종 검토를 거쳐야 합니다.</b></p>
-    <p style="margin-top:8px">인정이자는 기말 잔액 기준 단순 계산이며 실제 신고는 가지급금 적수 방식으로 확정됩니다.
-    시나리오 전망과 실효세율은 명시한 가정에 따른 추정치로, 실제 세액은 과세표준·소득 구조·지분 관계에 따라 달라집니다.</p>
+    <p style="margin:0"><b>본 답변은 참고용이며, 실제 업무 적용 전 반드시 담당 세무사의 최종 검토를 거쳐야 합니다.</b></p>
+    <p style="margin:10px 0 0">인정이자는 기말 잔액 기준으로 간단히 계산한 값이며, 실제 신고는 일별 잔액을 합산하는 적수 방식으로 확정합니다.
+    전망과 세금 금액은 이 자료에 적어둔 가정에 따른 추정치입니다.</p>
   </div>
 </footer>
 
@@ -463,171 +447,162 @@ footer .disc b{color:var(--ink)}
 
 <script>
 (function(){
-  var W=function(n){return n.toLocaleString('ko-KR')};
+  var W=function(n){return Math.round(n).toLocaleString('ko-KR')};
   var EOK=function(n){return (n/100000000).toFixed(2)+'억'};
-  var MAN=function(n){return W(Math.round(n/10000))+'만'};
+  var MAN=function(n){return W(n/10000)+'만'};
   var NS='http://www.w3.org/2000/svg';
   function el(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
   function topRound(x,y,w,h,r){
-    r=Math.min(r,w/2,h);
+    r=Math.min(r,w/2,Math.max(h,0.1));
     return 'M'+x+','+(y+h)+' L'+x+','+(y+r)+' Q'+x+','+y+' '+(x+r)+','+y+
            ' L'+(x+w-r)+','+y+' Q'+(x+w)+','+y+' '+(x+w)+','+(y+r)+' L'+(x+w)+','+(y+h)+' Z';
   }
-  function tipFor(panel){
-    var t=document.createElement('div'); t.className='tip'; panel.appendChild(t); return t;
-  }
-  function bind(hit,tip,panel,html){
-    function show(ev){
+  function mkTip(panel){var t=document.createElement('div');t.className='tip';panel.appendChild(t);return t}
+  function attach(hit,tip,panel,html,dy){
+    function show(){
       tip.innerHTML=html;
       var pr=panel.getBoundingClientRect(), br=hit.getBoundingClientRect();
       tip.style.left=(br.left-pr.left+br.width/2)+'px';
-      tip.style.top=(br.top-pr.top+ (br.height>40?12:0))+'px';
+      tip.style.top=(br.top-pr.top+(dy||0))+'px';
       tip.style.opacity=1;
     }
-    hit.addEventListener('mouseenter',show);
-    hit.addEventListener('focus',show);
-    hit.addEventListener('mouseleave',function(){tip.style.opacity=0});
-    hit.addEventListener('blur',function(){tip.style.opacity=0});
+    function hide(){tip.style.opacity=0}
     hit.setAttribute('tabindex','0');
+    hit.addEventListener('mouseenter',show); hit.addEventListener('focus',show);
+    hit.addEventListener('mouseleave',hide); hit.addEventListener('blur',hide);
   }
 
-  /* ─── chart 1: columns ─── */
+  /* ── Graph A: two stacked panels sharing one x-axis ── */
   (function(){
-    var svg=document.getElementById('c1'), panel=document.getElementById('p1'), tip=tipFor(panel);
-    var data=[
-      {y:'2022',sub:'기말',v:696214042,d:null,part:false},
-      {y:'2023',sub:'기말',v:718567284,d:22353242,part:false},
-      {y:'2024',sub:'기말',v:1245302714,d:526735430,part:false},
-      {y:'2025',sub:'기말',v:1484130277,d:238827563,part:false},
-      {y:'2026',sub:'8월말',v:1652442817,d:168312540,part:true}
+    var svg=document.getElementById('cA'), panel=document.getElementById('pA'), tip=mkTip(panel);
+    var D=[
+      {y:'2022',sub:'기말',bal:696214042,  int:32025846, diff:null},
+      {y:'2023',sub:'기말',bal:718567284,  int:33054095, diff:22353242},
+      {y:'2024',sub:'기말',bal:1245302714, int:57283925, diff:526735430},
+      {y:'2025',sub:'기말',bal:1484130277, int:68269990, diff:238827563},
+      {y:'2026',sub:'8월말',bal:1652442817,int:50605495, diff:168312540, part:true}
     ];
-    var L=76,R=884,T=44,B=286, MAX=1800000000;
+    var L=92,R=880;
+    var T1=54,B1=270, MAX1=1700000000;                 /* 잔액 */
+    var T2=356,B2=474, MAX2=70000000;                  /* 인정이자 */
     var g=el('g',{}); svg.appendChild(g);
+
+    /* panel titles */
+    var t1=el('text',{x:L,y:T1-26,'class':'plabel'}); t1.textContent='가지급금 잔액 (억원)'; g.appendChild(t1);
+    var t2=el('text',{x:L,y:T2-26,'class':'plabel'}); t2.textContent='그 해에 발생한 인정이자 (만원)'; g.appendChild(t2);
+    g.appendChild(el('line',{x1:0,x2:900,y1:T2-52,y2:T2-52,'class':'divider'}));
+
+    /* grids */
     var grid=el('g',{'class':'grid'}); g.appendChild(grid);
-    [0,600000000,1200000000,1800000000].forEach(function(t){
-      var y=B-(t/MAX)*(B-T);
+    [0,400000000,800000000,1200000000,1600000000].forEach(function(v){
+      var y=B1-(v/MAX1)*(B1-T1);
       grid.appendChild(el('line',{x1:L,x2:R,y1:y,y2:y}));
-      var tx=el('text',{x:L-12,y:y+4,'class':'tick','text-anchor':'end'});
-      tx.textContent=t===0?'0':(t/100000000)+'억'; g.appendChild(tx);
+      var tx=el('text',{x:L-14,y:y+4,'class':'tick','text-anchor':'end'});
+      tx.textContent=v===0?'0':(v/100000000)+'억'; g.appendChild(tx);
     });
-    g.appendChild(el('line',{x1:L,x2:R,y1:B,y2:B,'class':'base'}));
-    var band=(R-L)/data.length, bw=30;
-    data.forEach(function(d,i){
-      var cx=L+band*i+band/2, h=(d.v/MAX)*(B-T), y=B-h;
-      g.appendChild(el('path',{d:topRound(cx-bw/2,y,bw,h,4),
-        fill:'var(--accent)','fill-opacity':d.part?0.35:1}));
-      if(d.part) g.appendChild(el('path',{d:topRound(cx-bw/2,y,bw,3,2),fill:'var(--accent)'}));
-      var vl=el('text',{x:cx,y:y-12,'class':'dlab','text-anchor':'middle'});
-      vl.textContent=EOK(d.v); g.appendChild(vl);
-      var xl=el('text',{x:cx,y:B+22,'class':'xlab','text-anchor':'middle'});
+    [0,20000000,40000000,60000000].forEach(function(v){
+      var y=B2-(v/MAX2)*(B2-T2);
+      grid.appendChild(el('line',{x1:L,x2:R,y1:y,y2:y}));
+      var tx=el('text',{x:L-14,y:y+4,'class':'tick','text-anchor':'end'});
+      tx.textContent=v===0?'0':W(v/10000)+'만'; g.appendChild(tx);
+    });
+    g.appendChild(el('line',{x1:L,x2:R,y1:B1,y2:B1,'class':'base'}));
+    g.appendChild(el('line',{x1:L,x2:R,y1:B2,y2:B2,'class':'base'}));
+
+    var band=(R-L)/D.length, bw=34;
+    D.forEach(function(d,i){
+      var cx=L+band*i+band/2;
+      /* balance column */
+      var h1=(d.bal/MAX1)*(B1-T1), y1=B1-h1;
+      g.appendChild(el('path',{d:topRound(cx-bw/2,y1,bw,h1,4),fill:'var(--accent)',
+        'fill-opacity':d.part?0.4:1}));
+      if(d.part) g.appendChild(el('path',{d:topRound(cx-bw/2,y1,bw,4,3),fill:'var(--accent)'}));
+      var v1=el('text',{x:cx,y:y1-14,'class':'dlab','text-anchor':'middle'});
+      v1.textContent=EOK(d.bal); g.appendChild(v1);
+      /* interest column */
+      var h2=(d.int/MAX2)*(B2-T2), y2=B2-h2;
+      g.appendChild(el('path',{d:topRound(cx-bw/2,y2,bw,h2,4),fill:'var(--accent)',
+        'fill-opacity':d.part?0.4:1}));
+      if(d.part) g.appendChild(el('path',{d:topRound(cx-bw/2,y2,bw,4,3),fill:'var(--accent)'}));
+      var v2=el('text',{x:cx,y:y2-14,'class':'dlab','text-anchor':'middle'});
+      v2.textContent=MAN(d.int); g.appendChild(v2);
+      /* recorded = 0 */
+      var z=el('text',{x:cx,y:B2+24,'class':'zero','text-anchor':'middle'});
+      z.textContent='반영 0원'; g.appendChild(z);
+      /* shared x labels */
+      var xl=el('text',{x:cx,y:B2+50,'class':'xlab','text-anchor':'middle'});
       xl.textContent=d.y; g.appendChild(xl);
-      var xs=el('text',{x:cx,y:B+38,'class':'xsub','text-anchor':'middle'});
+      var xs=el('text',{x:cx,y:B2+68,'class':'xsub','text-anchor':'middle'});
       xs.textContent=d.sub; g.appendChild(xs);
-      var hit=el('rect',{x:cx-band/2,y:T-20,width:band,height:B-T+20,'class':'hit'});
+      /* one hit area spanning both panels */
+      var hit=el('rect',{x:cx-band/2,y:T1-30,width:band,height:B2-T1+40,'class':'hit'});
       g.appendChild(hit);
-      var html='<b>'+d.y+(d.part?' 8월말':' 사업연도말')+'</b><br>잔액 '+W(d.v)+'원'+
-        (d.d!==null?'<br>전년비 +'+W(d.d)+'원':'')+
-        '<br>인정이자 상당액 '+W(Math.round(d.v*0.046))+'원';
-      bind(hit,tip,panel,html);
+      attach(hit,tip,panel,
+        '<b>'+d.y+'년'+(d.part?' 8월말':'')+'</b><br>'+
+        '가지급금 '+W(d.bal)+'원'+(d.diff!==null?'<br>전년보다 +'+W(d.diff)+'원':'')+
+        '<br>인정이자 '+W(d.int)+'원'+(d.part?' (1~8월 예상)':'')+
+        '<br>장부 반영액 0원', 40);
     });
   })();
 
-  /* ─── chart 2: horizontal bars ─── */
+  /* ── Graph B: scenario lines ── */
   (function(){
-    var svg=document.getElementById('c2'), panel=document.getElementById('p2'), tip=tipFor(panel);
-    var data=[
-      {y:'2022',v:32025846,bal:696214042,st:'추정 · 미계상'},
-      {y:'2023',v:33054095,bal:718567284,st:'추정 · 미계상'},
-      {y:'2024',v:57283925,bal:1245302714,st:'추정 · 미계상'},
-      {y:'2025',v:68269990,bal:1484130277,st:'산출액 · 미계상'},
-      {y:'2026',v:50605495,bal:1652442817,st:'1~8월 예상'}
-    ];
-    var L=118,R=800,T=28,B=250, MAX=80000000;
-    var g=el('g',{}); svg.appendChild(g);
-    var grid=el('g',{'class':'grid'}); g.appendChild(grid);
-    [0,20000000,40000000,60000000,80000000].forEach(function(t){
-      var x=L+(t/MAX)*(R-L);
-      grid.appendChild(el('line',{x1:x,x2:x,y1:T,y2:B}));
-      var tx=el('text',{x:x,y:B+22,'class':'tick','text-anchor':'middle'});
-      tx.textContent=t===0?'0':W(t/10000)+'만'; g.appendChild(tx);
-    });
-    g.appendChild(el('line',{x1:L,x2:L,y1:T,y2:B,'class':'base'}));
-    var band=(B-T)/data.length, bh=22;
-    data.forEach(function(d,i){
-      var cy=T+band*i+band/2, w=(d.v/MAX)*(R-L);
-      var p='M'+L+','+(cy-bh/2)+' L'+(L+w-4)+','+(cy-bh/2)+' Q'+(L+w)+','+(cy-bh/2)+' '+(L+w)+','+(cy-bh/2+4)+
-            ' L'+(L+w)+','+(cy+bh/2-4)+' Q'+(L+w)+','+(cy+bh/2)+' '+(L+w-4)+','+(cy+bh/2)+' L'+L+','+(cy+bh/2)+' Z';
-      g.appendChild(el('path',{d:p,fill:'var(--accent)','fill-opacity':d.y==='2026'?0.35:1}));
-      if(d.y==='2026') g.appendChild(el('path',{d:'M'+(L+w-3)+','+(cy-bh/2)+' L'+(L+w)+','+(cy-bh/2)+' L'+(L+w)+','+(cy+bh/2)+' L'+(L+w-3)+','+(cy+bh/2)+' Z',fill:'var(--accent)'}));
-      var yl=el('text',{x:L-14,y:cy+4,'class':'xlab','text-anchor':'end'});
-      yl.textContent=d.y+(d.y==='2026'?' (8월)':''); g.appendChild(yl);
-      var vl=el('text',{x:L+w+10,y:cy+4,'class':'dlab'});
-      vl.textContent=MAN(d.v); g.appendChild(vl);
-      var hit=el('rect',{x:L,y:cy-band/2,width:R-L+70,height:band,'class':'hit'});
-      g.appendChild(hit);
-      bind(hit,tip,panel,'<b>'+d.y+'</b><br>인정이자 '+W(d.v)+'원<br>기준잔액 '+W(d.bal)+'원<br>'+d.st);
-    });
-  })();
-
-  /* ─── chart 3: lines ─── */
-  (function(){
-    var svg=document.getElementById('c3'), panel=document.getElementById('p3'), tip=tipFor(panel);
+    var svg=document.getElementById('cB'), panel=document.getElementById('pB'), tip=mkTip(panel);
     var years=[2026,2027,2028,2029,2030];
     var S=[
-      {n:'① 현 추세 유지',c:'var(--accent)',v:[1736599087,1989067897,2241536707,2494005517,2746474327],
-        i:[74076775,85690341,97303906,108917471,120531036]},
-      {n:'② 신규 발생 중단',c:'var(--s2)',v:[1652442817,1652442817,1652442817,1652442817,1652442817],
-        i:[72141181,76012370,76012370,76012370,76012370]},
-      {n:'③ 중단 + 연 3억 상환',c:'var(--s3)',v:[1652442817,1352442817,1052442817,752442817,452442817],
-        i:[72141181,69112370,55312370,41512370,27712370]}
+      {n:'그냥 두면',c:'var(--accent)',v:[1736599087,1989067897,2241536707,2494005517,2746474327]},
+      {n:'더 늘리지 않으면',c:'var(--s2)',v:[1652442817,1652442817,1652442817,1652442817,1652442817]},
+      {n:'매년 3억씩 갚으면',c:'var(--s3)',v:[1652442817,1352442817,1052442817,752442817,452442817]}
     ];
-    var L=76,R=790,T=30,B=290, MAX=3000000000;
+    var I=[[74076775,85690341,97303906,108917471,120531036],
+           [72141181,76012370,76012370,76012370,76012370],
+           [72141181,69112370,55312370,41512370,27712370]];
+    var L=92,R=768,T=36,B=306, MAX=2800000000;
     var g=el('g',{}); svg.appendChild(g);
     var grid=el('g',{'class':'grid'}); g.appendChild(grid);
-    [0,1000000000,2000000000,3000000000].forEach(function(t){
-      var y=B-(t/MAX)*(B-T);
+    [0,700000000,1400000000,2100000000,2800000000].forEach(function(v){
+      var y=B-(v/MAX)*(B-T);
       grid.appendChild(el('line',{x1:L,x2:R,y1:y,y2:y}));
-      var tx=el('text',{x:L-12,y:y+4,'class':'tick','text-anchor':'end'});
-      tx.textContent=t===0?'0':(t/100000000)+'억'; g.appendChild(tx);
+      var tx=el('text',{x:L-14,y:y+4,'class':'tick','text-anchor':'end'});
+      tx.textContent=v===0?'0':(v/100000000)+'억'; g.appendChild(tx);
     });
     g.appendChild(el('line',{x1:L,x2:R,y1:B,y2:B,'class':'base'}));
     var X=function(i){return L+(R-L)*i/(years.length-1)};
     var Y=function(v){return B-(v/MAX)*(B-T)};
     years.forEach(function(y,i){
-      var xl=el('text',{x:X(i),y:B+24,'class':'xlab','text-anchor':'middle'});
+      var xl=el('text',{x:X(i),y:B+30,'class':'xlab','text-anchor':'middle'});
       xl.textContent=y; g.appendChild(xl);
     });
     var cross=el('line',{x1:0,x2:0,y1:T,y2:B,stroke:'var(--axis)','stroke-width':1,opacity:0});
     g.appendChild(cross);
     S.forEach(function(s){
-      var d=s.v.map(function(v,i){return (i?'L':'M')+X(i)+','+Y(v)}).join(' ');
-      g.appendChild(el('path',{d:d,fill:'none',stroke:s.c,'stroke-width':2,
-        'stroke-linejoin':'round','stroke-linecap':'round'}));
+      g.appendChild(el('path',{d:s.v.map(function(v,i){return (i?'L':'M')+X(i)+','+Y(v)}).join(' '),
+        fill:'none',stroke:s.c,'stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round'}));
       var li=s.v.length-1;
-      g.appendChild(el('circle',{cx:X(li),cy:Y(s.v[li]),r:5,fill:s.c,
+      g.appendChild(el('circle',{cx:X(li),cy:Y(s.v[li]),r:5.5,fill:s.c,
         stroke:'var(--surface)','stroke-width':2}));
-      var lab=el('text',{x:X(li)+14,y:Y(s.v[li])+4,'class':'dlab'});
+      var lab=el('text',{x:X(li)+16,y:Y(s.v[li])+5,'class':'dlab'});
       lab.textContent=EOK(s.v[li]); g.appendChild(lab);
     });
     years.forEach(function(y,i){
-      var hit=el('rect',{x:X(i)-(R-L)/(years.length-1)/2,y:T,
-        width:(R-L)/(years.length-1),height:B-T,'class':'hit'});
+      var w=(R-L)/(years.length-1);
+      var hit=el('rect',{x:X(i)-w/2,y:T,width:w,height:B-T,'class':'hit'});
       g.appendChild(hit);
-      var rows=S.map(function(s){
+      var rows=S.map(function(s,k){
         return '<span style="color:'+s.c+'">■</span> '+s.n+' '+EOK(s.v[i])+
-               ' <span style="opacity:.7">(이자 '+MAN(s.i[i])+')</span>';
+               ' <span style="opacity:.65">(이자 '+MAN(I[k][i])+')</span>';
       }).join('<br>');
       function show(){
-        tip.innerHTML='<b>'+y+'년 기말</b><br>'+rows;
+        tip.innerHTML='<b>'+y+'년 말</b><br>'+rows;
         var pr=panel.getBoundingClientRect(), br=hit.getBoundingClientRect();
         tip.style.left=(br.left-pr.left+br.width/2)+'px';
-        tip.style.top=(br.top-pr.top+40)+'px';
+        tip.style.top=(br.top-pr.top+50)+'px';
         tip.style.opacity=1;
         cross.setAttribute('x1',X(i)); cross.setAttribute('x2',X(i)); cross.setAttribute('opacity',1);
       }
+      function hide(){tip.style.opacity=0;cross.setAttribute('opacity',0)}
       hit.setAttribute('tabindex','0');
       hit.addEventListener('mouseenter',show); hit.addEventListener('focus',show);
-      function hide(){tip.style.opacity=0;cross.setAttribute('opacity',0)}
       hit.addEventListener('mouseleave',hide); hit.addEventListener('blur',hide);
     });
   })();
